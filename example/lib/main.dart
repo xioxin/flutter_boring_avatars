@@ -29,10 +29,14 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: CustomPaint(
-          size: Size(100,100),
-          painter: RPSCustomPainter(),
-      ),
+        body: LayoutBuilder(
+          builder: (context, BoxConstraints constraints) {
+            return CustomPaint(
+              size: Size(constraints.maxWidth, constraints.maxHeight),
+                  painter: AvatarMarblePainter(),
+      );
+          }
+        ),
       ),
     );
   }

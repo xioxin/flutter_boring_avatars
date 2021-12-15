@@ -3,19 +3,23 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:svg_path_parser/svg_path_parser.dart';
 import './utilities.dart';
 import 'dart:ui';
+
+import 'path/path_parse.dart';
+import 'path/svgpath.dart';
 
 const _ELEMENTS = 3;
 const _SIZE = 80;
 
-class _AvatarMarbleData {
-  String color;
+class AvatarMarbleData {
+  Color color;
   int translateX;
   int translateY;
   int rotate;
   double scale;
-  _AvatarMarbleData({
+  AvatarMarbleData({
     required this.color,
     required this.translateX,
     required this.translateY,
@@ -24,12 +28,12 @@ class _AvatarMarbleData {
   });
 }
 
-List<_AvatarMarbleData> _generateColors(String name, List<String> colors) {
+List<AvatarMarbleData> generateAvatarMarbleData(String name, List<Color> colors) {
   final numFromName = getNumber(name);
   final range = colors.length;
   final elementsProperties = List.generate(
       _ELEMENTS,
-      (i) => _AvatarMarbleData(
+      (i) => AvatarMarbleData(
             color: getRandomColor(numFromName + i, colors, range),
             translateX: getUnit(numFromName * (i + 1), _SIZE ~/ 10, 1),
             translateY: getUnit(numFromName * (i + 1), _SIZE ~/ 10, 2),
@@ -39,75 +43,57 @@ List<_AvatarMarbleData> _generateColors(String name, List<String> colors) {
   return elementsProperties;
 }
 
-//Add this CustomPaint widget to the Widget Tree
-// CustomPaint(
-//     size: Size(WIDTH, (WIDTH*1).toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-//     painter: RPSCustomPainter(),
-// )
+class AvatarMarblePainter extends CustomPainter {
 
-//Copy this CustomPainter code to the Bottom of the File
-class RPSCustomPainter extends CustomPainter {
-  @override
+  final String name;
+  final List<Color> colors;
+
+  AvatarMarblePainter(this.name, this.colors) {
+    
+  };
+
+  Size viewBox = const Size(80,80);
+  Path svgPath(Canvas canvas, Size size, String p, {
+    double rotate = 0, double scale = 1,
+  }) {
+    final scaleX =  size.width / viewBox.width;
+    final scaleY =  size.height / viewBox.height;
+    final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
+    final transform = Matrix4.identity()
+    ..translate(40.0, 40.0)
+    ..rotateZ( rotate * (pi/180))
+    ..translate(-40.0, -40.0)
+    ..scale(scale, scale);
+    Path path = parseSvgPath(p);
+    path = path.transform(transform.storage);
+    path = path.transform(resizeTransform.storage);
+    return path;
+  }
+
+ @override
   void paint(Canvas canvas, Size size) {
-    // Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    // paint_0_fill.color = Colors.white.withOpacity(1.0);
-    // canvas.drawRRect(
-    //     RRect.fromRectAndCorners(Rect.fromLTWH(0, 0, size.width, size.height),
-    //         bottomRight: Radius.circular(size.width * 2.000000),
-    //         bottomLeft: Radius.circular(size.width * 2.000000),
-    //         topLeft: Radius.circular(size.width * 2.000000),
-    //         topRight: Radius.circular(size.width * 2.000000)),
-    //     paint_0_fill);
-
-    Paint paint_1_fill = Paint()..style = PaintingStyle.fill;
-    paint_1_fill.color = Color(0xffce1836).withOpacity(1.0);
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(Rect.fromLTWH(0, 0, size.width, size.height),
-            bottomRight: Radius.circular(size.width * 0.02500000),
-            bottomLeft: Radius.circular(size.width * 0.02500000),
-            topLeft: Radius.circular(size.width * 0.02500000),
-            topRight: Radius.circular(size.width * 0.02500000)),
-        paint_1_fill);
-
-    Path path_2 = Path();
-    path_2.moveTo(size.width * 0.4051750, size.height * 0.7418750);
-    path_2.lineTo(size.width * 0.6297000, size.height * 0.8812500);
-    path_2.lineTo(size.width * 0.9062500, size.height * 0.8812500);
-    path_2.lineTo(size.width * 0.9062500, size.height * -0.006250000);
-    path_2.lineTo(size.width * 0.4216000, size.height * -0.006250000);
-    path_2.lineTo(size.width * 0.3312500, size.height * 0.1672625);
-    path_2.lineTo(size.width * 0.5694625, size.height * 0.5057625);
-    path_2.lineTo(size.width * 0.4051750, size.height * 0.7418750);
-    path_2.close();
-
-    Paint paint_2_fill = Paint()..style = PaintingStyle.fill;
-    paint_2_fill.color = Color(0xff009989).withOpacity(1.0);
-    canvas.drawPath(path_2, paint_2_fill);
-
-    Path path_3 = Path();
-    path_3.moveTo(size.width * 0.2777000, size.height * 0.3000000);
-    path_3.lineTo(0, size.height * 0.5843750);
-    path_3.lineTo(size.width * 0.1763500, size.height * 1.060987);
-    path_3.lineTo(size.width * 0.9750000, size.height * 1.075000);
-    path_3.lineTo(size.width * 0.9364875, size.height * 0.3340500);
-    path_3.lineTo(size.width * 0.6567625, size.height * 0.3841125);
-    path_3.lineTo(size.width * 0.8189125, size.height * 0.6364375);
-    path_3.lineTo(size.width * 0.5270375, size.height * 0.9788750);
-    path_3.lineTo(size.width * 0.2776875, size.height * 0.3000000);
-    path_3.close();
-    path_3.transform(Matrix4.rotationZ( -24 * pi / 180).storage);
-
-    Matrix4.identity()..rotateZ( -24 * pi / 180);
-
-    // Matrix4.identity()..translate(Constants.elementCardHalfSize)..rotateY(initialRotateX)..translate(-Constants.elementCardHalfSize)
-
-    Paint paint_3_fill = Paint()..style = PaintingStyle.fill;
-    paint_3_fill.color = Color(0xffa3a948).withOpacity(1.0);
-    canvas.drawPath(path_3, paint_3_fill);
+    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+    final blur = MaskFilter.blur(
+      BlurStyle.normal, 7 * size.width / viewBox.width,
+    );
+    Paint paintFill = Paint()..style = PaintingStyle.fill;
+    paintFill.color = Color(0xffce1836);
+    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paintFill);
+    final path1 = svgPath(canvas, size, "M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z", rotate: 136, scale: 1.2);
+    Paint paintFill1 = Paint()..style = PaintingStyle.fill;
+    paintFill1.color = Color(0xff009989).withOpacity(1.0);
+    paintFill1.maskFilter = blur;
+    canvas.drawPath(path1, paintFill1);
+    final path2 = svgPath(canvas, size, "M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z", rotate: -24, scale: 1.2);
+    final paintFill2 = Paint()..style = PaintingStyle.fill;
+    paintFill2.blendMode = BlendMode.overlay;
+    paintFill2.color = Color(0xffa3a948).withOpacity(1.0);
+    paintFill2.maskFilter = blur;
+    canvas.drawPath(path2, paintFill2);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return false;
   }
 }

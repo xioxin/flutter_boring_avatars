@@ -14,7 +14,7 @@ int getUnit(int number, int range, [int index = 0]) {
   }
 }
 
-String getRandomColor(int number, List<String> colors, int range) {
+T getRandomColor<T>(int number, List<T> colors, int range) {
   return colors[(number) % range];
 }
 

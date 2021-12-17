@@ -4,6 +4,15 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+
+const defaultBoringAvatarsColors = [
+  Color(0xffA3A948),
+  Color(0xffEDB92E),
+  Color(0xffF85931),
+  Color(0xffCE1836),
+  Color(0xff009989)
+];
+
 int getNumber(String name) {
   if(name.codeUnits.isEmpty) return 0;
   return name.codeUnits.reduce((a, b) => a + b);

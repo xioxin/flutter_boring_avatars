@@ -23,7 +23,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   String name = 'Amelia Earhart';
   TextEditingController textController = TextEditingController.fromValue(const TextEditingValue(text: 'Amelia Earhart'));
 
@@ -108,6 +108,43 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 
+              ],
+            ),
+            SizedBox(height: 16,),
+             Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: [
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarMarble(duration: const Duration(milliseconds: 350), name: name),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarBeam(duration: const Duration(milliseconds: 350), name: name),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarPixel(duration: const Duration(milliseconds: 350), name: name),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarSunset(duration: const Duration(milliseconds: 350), name: name),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarBauhaus(duration: const Duration(milliseconds: 350), name: name),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: AnimatedAvatarRing(duration: const Duration(milliseconds: 350), name: name),
+                ),
               ],
             ),
           ],

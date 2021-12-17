@@ -53,3 +53,14 @@ String rotate(int a, int x, int y) {
 String scale(double s) {
   return "scale($s)";
 }
+
+double lerpDouble(double a, double b, double t) {
+  return (a + (b - a) * t );
+}
+
+double lerpRotate(double a, double b, double t) {
+
+  
+
+  return (a + (b - a) * t );
+}

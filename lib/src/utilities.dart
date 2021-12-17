@@ -1,6 +1,13 @@
 import 'dart:math';
 
-int getNumber(String name) => name.codeUnits.reduce((a, b) => a + b);
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+int getNumber(String name) {
+  if(name.codeUnits.isEmpty) return 0;
+  return name.codeUnits.reduce((a, b) => a + b);
+}
 int getModulus(int num, int max) => num % max;
 int getDigit(int number, int ntn) => (number / pow(10, ntn) % 10).floor();
 bool getBoolean(int number, int ntn) => getDigit(number, ntn) % 2 == 0;
@@ -18,15 +25,12 @@ T getRandomColor<T>(int number, List<T> colors, int range) {
   return colors[(number) % range];
 }
 
-String getContrast(String hexcolor) {
-  if (hexcolor[0] == '#') {
-    hexcolor = hexcolor.substring(1);
-  }
-  final r = int.parse(hexcolor.substring(0, 2), radix: 16);
-  final g = int.parse(hexcolor.substring(2, 4), radix: 16);
-  final b = int.parse(hexcolor.substring(4, 6), radix: 16);
+Color getContrast(Color color) {
+  final r = color.red;
+  final g = color.green;
+  final b = color.blue;
   final yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-  return yiq >= 128 ? 'black' : 'white';
+  return yiq >= 128 ? Colors.black : Colors.white;
 }
 
 String translate(int x, int y) {

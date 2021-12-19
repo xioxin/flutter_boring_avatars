@@ -5,6 +5,9 @@ Flutter implementation of (https://github.com/boringdesigners/boring-avatars)[bo
 
 Differences from the original project, based on Canvas, and the addition of transition animations.
 
+(https://xioxin.github.io/flutter_boring_avatars/)[Web Example]
+
+
 ## Getting started
 
 ```Dart

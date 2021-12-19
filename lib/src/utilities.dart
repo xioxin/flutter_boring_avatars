@@ -41,18 +41,6 @@ Color getContrast(Color color) {
   return yiq >= 128 ? Colors.black : Colors.white;
 }
 
-String translate(int x, int y) {
-  return "translate($x $y)";
-}
-
-String rotate(int a, int x, int y) {
-  return "rotate($a $x $y)";
-}
-
-String scale(double s) {
-  return "scale($s)";
-}
-
 double lerpDouble(double a, double b, double t) {
   return (a + (b - a) * t );
 }

@@ -1,11 +1,11 @@
 # flutter_boring_avatars
 
 ## Features
-Flutter implementation of (https://github.com/boringdesigners/boring-avatars)[boring avatars] that generates custom, round avatars from any username and color palette.
+Flutter implementation of [boring avatars](https://github.com/boringdesigners/boring-avatars) that generates custom, round avatars from any username and color palette.
 
 Differences from the original project, based on Canvas, and the addition of transition animations.
 
-(https://xioxin.github.io/flutter_boring_avatars/)[Web Example]
+[Web Example](https://xioxin.github.io/flutter_boring_avatars/)
 
 
 ## Getting started

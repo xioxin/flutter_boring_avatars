@@ -22,25 +22,40 @@ class AvatarSunsetData {
         4,
         (i) => getRandomColor<Color>(numFromName + i, colors!, range));
   }
+
+  @override
+  operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    if (other is AvatarSunsetData) {
+      if(colorList.length != other.colorList.length) return false;
+      int i = 0;
+      return colorList.every((c) => c == other.colorList[i++]);
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(colorList);
 }
 
 class AvatarSunsetPainter extends AvatarCustomPainter {
-  final AvatarSunsetData propertie;
+  final AvatarSunsetData properties;
 
   @override
   double get boxSize => 80;
 
   AvatarSunsetPainter(String name, [List<Color>? colors])
-      : propertie = AvatarSunsetData.generate(name, colors);
-  AvatarSunsetPainter.data(this.propertie);
+      : properties = AvatarSunsetData.generate(name, colors);
+  AvatarSunsetPainter.data(this.properties);
 
   @override
   void paint(Canvas canvas, Size size) {
     this.size = size;
-    final p0 = propertie.colorList[0];
-    final p1 = propertie.colorList[1];
-    final p2 = propertie.colorList[2];
-    final p3 = propertie.colorList[3];
+    final p0 = properties.colorList[0];
+    final p1 = properties.colorList[1];
+    final p2 = properties.colorList[2];
+    final p3 = properties.colorList[3];
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     final rect1 = Rect.fromLTWH(0, 0, size.width, size.height / 2);
     final paint1 = Paint()
@@ -63,7 +78,7 @@ class AvatarSunsetPainter extends AvatarCustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return oldDelegate is AvatarSunsetPainter && oldDelegate.properties != properties;
   }
 }
 
@@ -77,13 +92,17 @@ class AnimatedAvatarSunset extends ImplicitlyAnimatedWidget {
   AnimatedAvatarSunset({
     Key? key,
     required this.name,
+    this.colors,
     Curve curve = Curves.linear,
     required Duration duration,
     VoidCallback? onEnd,
-  }): data = AvatarSunsetData.generate(name), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+    this.size = Size.zero,
+  }): data = AvatarSunsetData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
+  final List<Color>? colors;
   final AvatarSunsetData data;
+  final Size size;
 
   @override
   AnimatedWidgetBaseState<AnimatedAvatarSunset> createState() => _AnimatedAvatarSunsetState();
@@ -92,7 +111,9 @@ class AnimatedAvatarSunset extends ImplicitlyAnimatedWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<String>('name', name));
+    properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarSunsetData>('data', data));
+    properties.add(DiagnosticsProperty<Size>('size', size));
   }
 }
 
@@ -107,7 +128,7 @@ class _AnimatedAvatarSunsetState extends AnimatedWidgetBaseState<AnimatedAvatarS
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(100, 100),
+      size: widget.size,
       painter: AvatarSunsetPainter.data(_data!.evaluate(animation)!),
     );
   }

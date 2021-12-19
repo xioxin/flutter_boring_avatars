@@ -27,6 +27,21 @@ class AvatarPixelData {
         64,
         (i) => getRandomColor<Color>(numFromName % (i + 13), colors!, range));
   }
+
+  @override
+  operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    if (other is AvatarPixelData) {
+      if(colorList.length != other.colorList.length) return false;
+      int i = 0;
+      return colorList.every((c) => c == other.colorList[i++]);
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(colorList);
 }
 
 class AvatarPixelPainter extends AvatarCustomPainter {
@@ -56,7 +71,7 @@ class AvatarPixelPainter extends AvatarCustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return oldDelegate is AvatarPixelPainter && oldDelegate.properties != properties;
   }
 }
 
@@ -70,13 +85,17 @@ class AnimatedAvatarPixel extends ImplicitlyAnimatedWidget {
   AnimatedAvatarPixel({
     Key? key,
     required this.name,
+    this.colors,
     Curve curve = Curves.linear,
     required Duration duration,
     VoidCallback? onEnd,
-  }): data = AvatarPixelData.generate(name), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+    this.size = Size.zero,
+  }): data = AvatarPixelData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
+  final List<Color>? colors;
   final AvatarPixelData data;
+  final Size size;
 
   @override
   AnimatedWidgetBaseState<AnimatedAvatarPixel> createState() => _AnimatedAvatarPixelState();
@@ -85,7 +104,10 @@ class AnimatedAvatarPixel extends ImplicitlyAnimatedWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<String>('name', name));
+    properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarPixelData>('data', data));
+    properties.add(DiagnosticsProperty<Size>('size', size));
+
   }
 }
 
@@ -100,7 +122,7 @@ class _AnimatedAvatarPixelState extends AnimatedWidgetBaseState<AnimatedAvatarPi
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(100, 100),
+      size: widget.size,
       painter: AvatarPixelPainter.data(_data!.evaluate(animation)!),
     );
   }

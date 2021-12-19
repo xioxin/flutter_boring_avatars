@@ -45,18 +45,34 @@ class AvatarRingData {
       colorsShuffle[4],
     ];
   }
+
+  @override
+  operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    if (other is AvatarRingData) {
+      if(colorList.length != other.colorList.length) return false;
+      int i = 0;
+      return colorList.every((c) => c == other.colorList[i++]);
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(colorList);
+
 }
 
 class AvatarRingPainter extends AvatarCustomPainter {
-  final AvatarRingData propertie;
+  final AvatarRingData properties;
 
   @override
   double get boxSize => 90;
 
   AvatarRingPainter(String name, [List<Color>? colors])
-      : propertie = AvatarRingData.generate(name, colors);
+      : properties = AvatarRingData.generate(name, colors);
 
-  AvatarRingPainter.data(this.propertie);
+  AvatarRingPainter.data(this.properties);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -64,15 +80,15 @@ class AvatarRingPainter extends AvatarCustomPainter {
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     int i = 0;
     for (var pathString in _avatarRingPath) {
-      final color = propertie.colorList[i++];
+      final color = properties.colorList[i++];
       canvas.drawPath(svgPath(pathString), fillPaint(color));
     }
-    canvas.drawCircle(Offset(size.width/2, size.height/2), cX(23), fillPaint(propertie.colorList.last));
+    canvas.drawCircle(Offset(size.width/2, size.height/2), cX(23), fillPaint(properties.colorList.last));
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return oldDelegate is AvatarRingPainter && oldDelegate.properties != properties;
   }
 }
 
@@ -86,13 +102,17 @@ class AnimatedAvatarRing extends ImplicitlyAnimatedWidget {
   AnimatedAvatarRing({
     Key? key,
     required this.name,
+    this.colors,
     Curve curve = Curves.linear,
     required Duration duration,
     VoidCallback? onEnd,
-  }): data = AvatarRingData.generate(name), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+    this.size = Size.zero,
+  }): data = AvatarRingData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
+  final List<Color>? colors;
   final AvatarRingData data;
+  final Size size;
 
   @override
   AnimatedWidgetBaseState<AnimatedAvatarRing> createState() => _AnimatedAvatarRingState();
@@ -101,7 +121,10 @@ class AnimatedAvatarRing extends ImplicitlyAnimatedWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<String>('name', name));
+    properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarRingData>('data', data));
+    properties.add(DiagnosticsProperty<Size>('size', size));
+
   }
 }
 
@@ -116,7 +139,7 @@ class _AnimatedAvatarRingState extends AnimatedWidgetBaseState<AnimatedAvatarRin
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(100, 100),
+      size: widget.size,
       painter: AvatarRingPainter.data(_data!.evaluate(animation)!),
     );
   }

@@ -22,7 +22,9 @@ class AvatarRingData {
     required this.colorList,
   });
   static lerp(AvatarRingData? a, AvatarRingData? b, double t) {
-    final newColor = List.generate(max(a?.colorList.length ?? 0, b?.colorList.length ?? 0), (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
+    final newColor = List.generate(
+        max(a?.colorList.length ?? 0, b?.colorList.length ?? 0),
+        (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
     return AvatarRingData(colorList: newColor);
   }
 
@@ -31,8 +33,7 @@ class AvatarRingData {
     final numFromName = getNumber(name);
     final range = colors.length;
     final colorsShuffle = List.generate(
-        5,
-        (i) => getRandomColor<Color>(numFromName + (1 + i), colors!, range));
+        5, (i) => getRandomColor<Color>(numFromName + (1 + i), colors!, range));
     colorList = [
       colorsShuffle[0],
       colorsShuffle[1],
@@ -51,7 +52,7 @@ class AvatarRingData {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
     if (other is AvatarRingData) {
-      if(colorList.length != other.colorList.length) return false;
+      if (colorList.length != other.colorList.length) return false;
       int i = 0;
       return colorList.every((c) => c == other.colorList[i++]);
     }
@@ -60,7 +61,6 @@ class AvatarRingData {
 
   @override
   int get hashCode => Object.hashAll(colorList);
-
 }
 
 class AvatarRingPainter extends AvatarCustomPainter {
@@ -83,17 +83,20 @@ class AvatarRingPainter extends AvatarCustomPainter {
       final color = properties.colorList[i++];
       canvas.drawPath(svgPath(pathString), fillPaint(color));
     }
-    canvas.drawCircle(Offset(size.width/2, size.height/2), cX(23), fillPaint(properties.colorList.last));
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), cX(23),
+        fillPaint(properties.colorList.last));
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarRingPainter && oldDelegate.properties != properties;
+    return oldDelegate is AvatarRingPainter &&
+        oldDelegate.properties != properties;
   }
 }
 
 class AvatarRingDataTween extends Tween<AvatarRingData?> {
-  AvatarRingDataTween({ AvatarRingData? begin, AvatarRingData? end }) : super(begin: begin, end: end);
+  AvatarRingDataTween({AvatarRingData? begin, AvatarRingData? end})
+      : super(begin: begin, end: end);
   @override
   AvatarRingData? lerp(double t) => AvatarRingData.lerp(begin, end, t);
 }
@@ -107,7 +110,8 @@ class AnimatedAvatarRing extends ImplicitlyAnimatedWidget {
     required Duration duration,
     VoidCallback? onEnd,
     this.size = Size.zero,
-  }): data = AvatarRingData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+  })  : data = AvatarRingData.generate(name, colors),
+        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
   final List<Color>? colors;
@@ -115,7 +119,8 @@ class AnimatedAvatarRing extends ImplicitlyAnimatedWidget {
   final Size size;
 
   @override
-  AnimatedWidgetBaseState<AnimatedAvatarRing> createState() => _AnimatedAvatarRingState();
+  AnimatedWidgetBaseState<AnimatedAvatarRing> createState() =>
+      _AnimatedAvatarRingState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -124,16 +129,18 @@ class AnimatedAvatarRing extends ImplicitlyAnimatedWidget {
     properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarRingData>('data', data));
     properties.add(DiagnosticsProperty<Size>('size', size));
-
   }
 }
 
-class _AnimatedAvatarRingState extends AnimatedWidgetBaseState<AnimatedAvatarRing> {
+class _AnimatedAvatarRingState
+    extends AnimatedWidgetBaseState<AnimatedAvatarRing> {
   AvatarRingDataTween? _data;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data, (dynamic value) => AvatarRingDataTween(begin: value)) as AvatarRingDataTween?;
+    _data = visitor(_data, widget.data,
+            (dynamic value) => AvatarRingDataTween(begin: value))
+        as AvatarRingDataTween?;
   }
 
   @override
@@ -147,6 +154,7 @@ class _AnimatedAvatarRingState extends AnimatedWidgetBaseState<AnimatedAvatarRin
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarRingDataTween>('data', _data, defaultValue: null));
+    description.add(DiagnosticsProperty<AvatarRingDataTween>('data', _data,
+        defaultValue: null));
   }
 }

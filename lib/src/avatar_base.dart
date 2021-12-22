@@ -11,14 +11,14 @@ abstract class AvatarCustomPainter extends CustomPainter {
     String p, {
     double rotate = 0,
     double scale = 1,
-    double transformX = 0,
-    double transformY = 0,
+    double translateX = 0,
+    double translateY = 0,
   }) {
     final scaleX = size.width / boxSize;
     final scaleY = size.height / boxSize;
     final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
     final transform = Matrix4.identity()
-      ..translate(transformX, transformY)
+      ..translate(translateX, translateY)
       ..translate(boxSize / 2, boxSize / 2)
       ..rotateZ(rotate * (pi / 180))
       ..translate(-boxSize / 2, -boxSize / 2)
@@ -37,6 +37,7 @@ abstract class AvatarCustomPainter extends CustomPainter {
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round
     ..strokeWidth = cX(width)
+    ..strokeJoin = StrokeJoin.round
     ..color = color;
 
   Paint strokePaint(Color color, double width) => Paint()

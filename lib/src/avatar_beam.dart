@@ -100,6 +100,8 @@ class AvatarBeamData {
       wrapperScale: lerpDouble(a.wrapperScale, b.wrapperScale, t),
       isMouthOpen: t >= 0.5 ? b.isMouthOpen : a.isMouthOpen,
       isCircle: t >= 0.5 ? b.isCircle : a.isCircle,
+      // isMouthOpen: b.isMouthOpen,
+      // isCircle: b.isCircle,
       eyeSpread: lerpDouble(a.eyeSpread, b.eyeSpread, t),
       mouthSpread: lerpDouble(a.mouthSpread, b.mouthSpread, t),
       faceRotate: lerpRotate(a.faceRotate, b.faceRotate, t),
@@ -197,12 +199,14 @@ class AvatarBeamPainter extends AvatarCustomPainter {
             translateY: p.faceTranslateY,
             rotate: p.faceRotate)
         .storage);
+    final mouthSpread = 19 + p.mouthSpread;
     if (p.isMouthOpen) {
-      final mouthPath = svgPath('M15 ${19 + p.mouthSpread}c2 1 4 1 6 0');
-      canvas.drawPath(mouthPath, roundStrokePaint(p.faceColor, 1.0));
+      final mouthPath1 = svgPath('M15 ${mouthSpread}c2 1 4 1 6 0');
+      canvas.drawPath(mouthPath1, roundStrokePaint(p.faceColor, 1.0));
     } else {
-      final mouthPath = svgPath('M13,${19 + p.mouthSpread} a1,0.75 0 0,0 10,0');
-      canvas.drawPath(mouthPath, fillPaint(p.faceColor));
+      final mouthPath2 = svgPath('M13,$mouthSpread a1,0.75 0 0,0 10,0');
+      canvas.drawPath(
+          mouthPath2, fillPaint(p.isMouthOpen ? p.wrapperColor : p.faceColor));
     }
     final lEyeRect = getRectFromLTWH(14 - p.eyeSpread, 14, 1.5, 2);
     canvas.drawRRect(
@@ -256,7 +260,6 @@ class AnimatedAvatarBeam extends ImplicitlyAnimatedWidget {
     properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarBeamData>('data', data));
     properties.add(DiagnosticsProperty<Size>('size', size));
-
   }
 }
 

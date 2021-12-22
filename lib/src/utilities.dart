@@ -13,9 +13,10 @@ List<Color> defaultBoringAvatarsColors = [
 ];
 
 int getNumber(String name) {
-  if(name.codeUnits.isEmpty) return 0;
+  if (name.codeUnits.isEmpty) return 0;
   return name.codeUnits.reduce((a, b) => a + b);
 }
+
 int getModulus(int num, int max) => num % max;
 int getDigit(int number, int ntn) => (number / pow(10, ntn) % 10).floor();
 bool getBoolean(int number, int ntn) => getDigit(number, ntn) % 2 == 0;
@@ -42,35 +43,35 @@ Color getContrast(Color color) {
 }
 
 double lerpDouble(double a, double b, double t) {
-  return (a + (b - a) * t );
+  return (a + (b - a) * t);
 }
 
 double lerpRotate(double a, double b, double t) {
   a = a % 360;
   b = b % 360;
-  if(a < 0) a = 360 + a;
-  if(b < 0) b = 360 + b;
-  if(a == b) return a;
-  if(b - a > 180) {
+  if (a < 0) a = 360 + a;
+  if (b < 0) b = 360 + b;
+  if (a == b) return a;
+  if (b - a > 180) {
     b = b - 360;
   }
-  if(a - b > 180) {
+  if (a - b > 180) {
     a = a - 360;
   }
-  return (a + (b - a) * t );
+  return (a + (b - a) * t);
 }
 
 double lerpRotate180(double a, double b, double t) {
   a = a % 180;
   b = b % 180;
-  if(a < 0) a = 180 + a;
-  if(b < 0) b = 180 + b;
-  if(a == b) return a;
-  if(b - a > 90) {
+  if (a < 0) a = 180 + a;
+  if (b < 0) b = 180 + b;
+  if (a == b) return a;
+  if (b - a > 90) {
     b = b - 180;
   }
-  if(a - b > 90) {
+  if (a - b > 90) {
     a = a - 180;
   }
-  return (a + (b - a) * t );
+  return (a + (b - a) * t);
 }

@@ -7,18 +7,18 @@ import 'avatar_base.dart';
 import 'package:flutter/foundation.dart';
 
 class AvatarBauhausData {
-  late Color  bgColor;
+  late Color bgColor;
   late double element1TranslateX;
   late double element1TranslateY;
-  late Color  element1Color;
+  late Color element1Color;
   late double element1Rotate;
   late double element1Height;
   late double element2TranslateX;
   late double element2TranslateY;
-  late Color  element2Color;
+  late Color element2Color;
   late double element3TranslateX;
   late double element3TranslateY;
-  late Color  element3Color;
+  late Color element3Color;
   late double element3Rotate;
   AvatarBauhausData({
     required this.bgColor,
@@ -47,20 +47,26 @@ class AvatarBauhausData {
 
     i = 1;
     element1Color = getRandomColor(numFromName + i, colors, range);
-    element1TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
-    element1TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
+    element1TranslateX =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
+    element1TranslateY =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
     element1Rotate = getUnit(numFromName * (i + 1), 360);
     element1Height = isSquare ? boxSize : boxSize / 8;
 
     i = 2;
     element2Color = getRandomColor(numFromName + i, colors, range);
-    element2TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
-    element2TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
+    element2TranslateX =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
+    element2TranslateY =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
 
     i = 3;
     element3Color = getRandomColor(numFromName + i, colors, range);
-    element3TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
-    element3TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
+    element3TranslateX =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
+    element3TranslateY =
+        getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
     element3Rotate = getUnit(numFromName * (i + 1), 360);
   }
 
@@ -69,22 +75,26 @@ class AvatarBauhausData {
     a ??= AvatarBauhausData.generate('');
     b ??= AvatarBauhausData.generate('');
     return AvatarBauhausData(
-      bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
-      element1TranslateX: lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
-      element1TranslateY: lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
-      element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
-      element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
-      element1Height: lerpDouble(a.element1Height, b.element1Height, t),
-      element2TranslateX: lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
-      element2TranslateY: lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
-      element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
-      element3TranslateX: lerpDouble(a.element3TranslateX, b.element3TranslateX, t),
-      element3TranslateY: lerpDouble(a.element3TranslateY, b.element3TranslateY, t),
-      element3Color: Color.lerp(a.element3Color, b.element3Color, t)!,
-      element3Rotate: lerpRotate180(a.element3Rotate, b.element3Rotate, t)
-    );
+        bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
+        element1TranslateX:
+            lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
+        element1TranslateY:
+            lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
+        element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
+        element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
+        element1Height: lerpDouble(a.element1Height, b.element1Height, t),
+        element2TranslateX:
+            lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
+        element2TranslateY:
+            lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
+        element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
+        element3TranslateX:
+            lerpDouble(a.element3TranslateX, b.element3TranslateX, t),
+        element3TranslateY:
+            lerpDouble(a.element3TranslateY, b.element3TranslateY, t),
+        element3Color: Color.lerp(a.element3Color, b.element3Color, t)!,
+        element3Rotate: lerpRotate180(a.element3Rotate, b.element3Rotate, t));
   }
-
 
   @override
   operator ==(Object other) {
@@ -92,39 +102,38 @@ class AvatarBauhausData {
     if (other.runtimeType != runtimeType) return false;
     if (other is AvatarBauhausData) {
       return bgColor == other.bgColor &&
-      element1TranslateX == other.element1TranslateX &&
-      element1TranslateY == other.element1TranslateY &&
-      element1Color == other.element1Color &&
-      element1Rotate == other.element1Rotate &&
-      element1Height == other.element1Height &&
-      element2TranslateX == other.element2TranslateX &&
-      element2TranslateY == other.element2TranslateY &&
-      element2Color == other.element2Color &&
-      element3TranslateX == other.element3TranslateX &&
-      element3TranslateY == other.element3TranslateY &&
-      element3Color == other.element3Color &&
-      element3Rotate == other.element3Rotate;
+          element1TranslateX == other.element1TranslateX &&
+          element1TranslateY == other.element1TranslateY &&
+          element1Color == other.element1Color &&
+          element1Rotate == other.element1Rotate &&
+          element1Height == other.element1Height &&
+          element2TranslateX == other.element2TranslateX &&
+          element2TranslateY == other.element2TranslateY &&
+          element2Color == other.element2Color &&
+          element3TranslateX == other.element3TranslateX &&
+          element3TranslateY == other.element3TranslateY &&
+          element3Color == other.element3Color &&
+          element3Rotate == other.element3Rotate;
     }
     return false;
   }
 
   @override
   int get hashCode => Object.hashAll([
-    bgColor,
-    element1TranslateX,
-    element1TranslateY,
-    element1Color,
-    element1Rotate,
-    element1Height,
-    element2TranslateX,
-    element2TranslateY,
-    element2Color,
-    element3TranslateX,
-    element3TranslateY,
-    element3Color,
-    element3Rotate,
-  ]);
-
+        bgColor,
+        element1TranslateX,
+        element1TranslateY,
+        element1Color,
+        element1Rotate,
+        element1Height,
+        element2TranslateX,
+        element2TranslateY,
+        element2Color,
+        element3TranslateX,
+        element3TranslateY,
+        element3Color,
+        element3Rotate,
+      ]);
 }
 
 class AvatarBauhausPainter extends AvatarCustomPainter {
@@ -159,8 +168,8 @@ class AvatarBauhausPainter extends AvatarCustomPainter {
     t1.invert();
     canvas.transform(t1.storage);
 
-    final t2 =
-        getTransform(translateX: p.element2TranslateX, translateY: p.element2TranslateY);
+    final t2 = getTransform(
+        translateX: p.element2TranslateX, translateY: p.element2TranslateY);
     canvas.transform(t2.storage);
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 5,
         fillPaint(p.element2Color));
@@ -178,7 +187,8 @@ class AvatarBauhausPainter extends AvatarCustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarBauhausPainter && oldDelegate.properties != properties;
+    return oldDelegate is AvatarBauhausPainter &&
+        oldDelegate.properties != properties;
   }
 }
 

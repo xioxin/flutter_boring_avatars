@@ -11,16 +11,18 @@ class AvatarSunsetData {
     required this.colorList,
   });
   static lerp(AvatarSunsetData? a, AvatarSunsetData? b, double t) {
-    final newColor = List.generate(max(a?.colorList.length ?? 0, b?.colorList.length ?? 0), (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
+    final newColor = List.generate(
+        max(a?.colorList.length ?? 0, b?.colorList.length ?? 0),
+        (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
     return AvatarSunsetData(colorList: newColor);
   }
+
   AvatarSunsetData.generate(String name, [List<Color>? colors]) {
     colors ??= defaultBoringAvatarsColors;
     final numFromName = getNumber(name);
     final range = colors.length;
     colorList = List.generate(
-        4,
-        (i) => getRandomColor<Color>(numFromName + i, colors!, range));
+        4, (i) => getRandomColor<Color>(numFromName + i, colors!, range));
   }
 
   @override
@@ -28,7 +30,7 @@ class AvatarSunsetData {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
     if (other is AvatarSunsetData) {
-      if(colorList.length != other.colorList.length) return false;
+      if (colorList.length != other.colorList.length) return false;
       int i = 0;
       return colorList.every((c) => c == other.colorList[i++]);
     }
@@ -60,13 +62,14 @@ class AvatarSunsetPainter extends AvatarCustomPainter {
     final rect1 = Rect.fromLTWH(0, 0, size.width, size.height / 2);
     final paint1 = Paint()
       ..shader = LinearGradient(
-              colors: [ p0, p1],
+              colors: [p0, p1],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter)
           .createShader(rect1);
     canvas.drawRect(rect1, paint1);
 
-    final rect2 = Rect.fromLTWH(0, size.height / 2, size.width, size.height / 2);
+    final rect2 =
+        Rect.fromLTWH(0, size.height / 2, size.width, size.height / 2);
     final paint2 = Paint()
       ..shader = LinearGradient(
               colors: [p2, p3],
@@ -78,12 +81,14 @@ class AvatarSunsetPainter extends AvatarCustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarSunsetPainter && oldDelegate.properties != properties;
+    return oldDelegate is AvatarSunsetPainter &&
+        oldDelegate.properties != properties;
   }
 }
 
 class AvatarSunsetDataTween extends Tween<AvatarSunsetData?> {
-  AvatarSunsetDataTween({ AvatarSunsetData? begin, AvatarSunsetData? end }) : super(begin: begin, end: end);
+  AvatarSunsetDataTween({AvatarSunsetData? begin, AvatarSunsetData? end})
+      : super(begin: begin, end: end);
   @override
   AvatarSunsetData? lerp(double t) => AvatarSunsetData.lerp(begin, end, t);
 }
@@ -97,7 +102,8 @@ class AnimatedAvatarSunset extends ImplicitlyAnimatedWidget {
     required Duration duration,
     VoidCallback? onEnd,
     this.size = Size.zero,
-  }): data = AvatarSunsetData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+  })  : data = AvatarSunsetData.generate(name, colors),
+        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
   final List<Color>? colors;
@@ -105,7 +111,8 @@ class AnimatedAvatarSunset extends ImplicitlyAnimatedWidget {
   final Size size;
 
   @override
-  AnimatedWidgetBaseState<AnimatedAvatarSunset> createState() => _AnimatedAvatarSunsetState();
+  AnimatedWidgetBaseState<AnimatedAvatarSunset> createState() =>
+      _AnimatedAvatarSunsetState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -117,12 +124,15 @@ class AnimatedAvatarSunset extends ImplicitlyAnimatedWidget {
   }
 }
 
-class _AnimatedAvatarSunsetState extends AnimatedWidgetBaseState<AnimatedAvatarSunset> {
+class _AnimatedAvatarSunsetState
+    extends AnimatedWidgetBaseState<AnimatedAvatarSunset> {
   AvatarSunsetDataTween? _data;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data, (dynamic value) => AvatarSunsetDataTween(begin: value)) as AvatarSunsetDataTween?;
+    _data = visitor(_data, widget.data,
+            (dynamic value) => AvatarSunsetDataTween(begin: value))
+        as AvatarSunsetDataTween?;
   }
 
   @override
@@ -136,6 +146,7 @@ class _AnimatedAvatarSunsetState extends AnimatedWidgetBaseState<AnimatedAvatarS
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarSunsetDataTween>('data', _data, defaultValue: null));
+    description.add(DiagnosticsProperty<AvatarSunsetDataTween>('data', _data,
+        defaultValue: null));
   }
 }

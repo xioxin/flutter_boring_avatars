@@ -6,8 +6,72 @@ import 'dart:ui';
 import 'avatar_base.dart';
 import 'package:flutter/foundation.dart';
 
-const List<List<int>> _avatarPixelPos = [[0,0],[2,0],[4,0],[6,0],[1,0],[3,0],[5,0],[7,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[3,1],[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7]];
-
+const List<List<int>> _avatarPixelPos = [
+  [0, 0],
+  [2, 0],
+  [4, 0],
+  [6, 0],
+  [1, 0],
+  [3, 0],
+  [5, 0],
+  [7, 0],
+  [0, 1],
+  [0, 2],
+  [0, 3],
+  [0, 4],
+  [0, 5],
+  [0, 6],
+  [0, 7],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4],
+  [2, 5],
+  [2, 6],
+  [2, 7],
+  [4, 1],
+  [4, 2],
+  [4, 3],
+  [4, 4],
+  [4, 5],
+  [4, 6],
+  [4, 7],
+  [6, 1],
+  [6, 2],
+  [6, 3],
+  [6, 4],
+  [6, 5],
+  [6, 6],
+  [6, 7],
+  [1, 1],
+  [1, 2],
+  [1, 3],
+  [1, 4],
+  [1, 5],
+  [1, 6],
+  [1, 7],
+  [3, 1],
+  [3, 2],
+  [3, 3],
+  [3, 4],
+  [3, 5],
+  [3, 6],
+  [3, 7],
+  [5, 1],
+  [5, 2],
+  [5, 3],
+  [5, 4],
+  [5, 5],
+  [5, 6],
+  [5, 7],
+  [7, 1],
+  [7, 2],
+  [7, 3],
+  [7, 4],
+  [7, 5],
+  [7, 6],
+  [7, 7]
+];
 
 class AvatarPixelData {
   late List<Color> colorList;
@@ -15,7 +79,9 @@ class AvatarPixelData {
     required this.colorList,
   });
   static lerp(AvatarPixelData? a, AvatarPixelData? b, double t) {
-    final newColor = List.generate(max(a?.colorList.length ?? 0, b?.colorList.length ?? 0), (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
+    final newColor = List.generate(
+        max(a?.colorList.length ?? 0, b?.colorList.length ?? 0),
+        (index) => Color.lerp(a?.colorList[index], b?.colorList[index], t)!);
     return AvatarPixelData(colorList: newColor);
   }
 
@@ -23,8 +89,7 @@ class AvatarPixelData {
     colors ??= defaultBoringAvatarsColors;
     final numFromName = getNumber(name);
     final range = colors.length;
-    colorList = List.generate(
-        64,
+    colorList = List.generate(64,
         (i) => getRandomColor<Color>(numFromName % (i + 13), colors!, range));
   }
 
@@ -33,7 +98,7 @@ class AvatarPixelData {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
     if (other is AvatarPixelData) {
-      if(colorList.length != other.colorList.length) return false;
+      if (colorList.length != other.colorList.length) return false;
       int i = 0;
       return colorList.every((c) => c == other.colorList[i++]);
     }
@@ -52,7 +117,7 @@ class AvatarPixelPainter extends AvatarCustomPainter {
 
   AvatarPixelPainter(String name, [List<Color>? colors])
       : properties = AvatarPixelData.generate(name, colors);
-  
+
   AvatarPixelPainter.data(this.properties);
 
   @override
@@ -65,18 +130,22 @@ class AvatarPixelPainter extends AvatarCustomPainter {
       final pos = _avatarPixelPos[i++];
       final x = pos[0];
       final y = pos[1];
-      canvas.drawRect(Rect.fromLTWH(itemWidth * x, itemHeight * y, itemWidth, itemHeight), fillPaint(color));
+      canvas.drawRect(
+          Rect.fromLTWH(itemWidth * x, itemHeight * y, itemWidth, itemHeight),
+          fillPaint(color));
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarPixelPainter && oldDelegate.properties != properties;
+    return oldDelegate is AvatarPixelPainter &&
+        oldDelegate.properties != properties;
   }
 }
 
 class AvatarPixelDataTween extends Tween<AvatarPixelData?> {
-  AvatarPixelDataTween({ AvatarPixelData? begin, AvatarPixelData? end }) : super(begin: begin, end: end);
+  AvatarPixelDataTween({AvatarPixelData? begin, AvatarPixelData? end})
+      : super(begin: begin, end: end);
   @override
   AvatarPixelData? lerp(double t) => AvatarPixelData.lerp(begin, end, t);
 }
@@ -90,7 +159,8 @@ class AnimatedAvatarPixel extends ImplicitlyAnimatedWidget {
     required Duration duration,
     VoidCallback? onEnd,
     this.size = Size.zero,
-  }): data = AvatarPixelData.generate(name, colors), super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+  })  : data = AvatarPixelData.generate(name, colors),
+        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
 
   final String name;
   final List<Color>? colors;
@@ -98,7 +168,8 @@ class AnimatedAvatarPixel extends ImplicitlyAnimatedWidget {
   final Size size;
 
   @override
-  AnimatedWidgetBaseState<AnimatedAvatarPixel> createState() => _AnimatedAvatarPixelState();
+  AnimatedWidgetBaseState<AnimatedAvatarPixel> createState() =>
+      _AnimatedAvatarPixelState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -107,16 +178,18 @@ class AnimatedAvatarPixel extends ImplicitlyAnimatedWidget {
     properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
     properties.add(DiagnosticsProperty<AvatarPixelData>('data', data));
     properties.add(DiagnosticsProperty<Size>('size', size));
-
   }
 }
 
-class _AnimatedAvatarPixelState extends AnimatedWidgetBaseState<AnimatedAvatarPixel> {
+class _AnimatedAvatarPixelState
+    extends AnimatedWidgetBaseState<AnimatedAvatarPixel> {
   AvatarPixelDataTween? _data;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data, (dynamic value) => AvatarPixelDataTween(begin: value)) as AvatarPixelDataTween?;
+    _data = visitor(_data, widget.data,
+            (dynamic value) => AvatarPixelDataTween(begin: value))
+        as AvatarPixelDataTween?;
   }
 
   @override
@@ -130,6 +203,7 @@ class _AnimatedAvatarPixelState extends AnimatedWidgetBaseState<AnimatedAvatarPi
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarPixelDataTween>('data', _data, defaultValue: null));
+    description.add(DiagnosticsProperty<AvatarPixelDataTween>('data', _data,
+        defaultValue: null));
   }
 }

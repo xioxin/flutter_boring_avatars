@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   String name = 'Bessie Coleman';
   TextEditingController textController = TextEditingController.fromValue(
-      const TextEditingValue(text: 'Amelia Earhart'));
+      const TextEditingValue(text: 'Bessie Coleman'));
 
   @override
   void initState() {
@@ -112,8 +112,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       crossAxisCount: BoringAvatarsType.values.length,
                       children: [
                         ...BoringAvatarsType.values
-                            .map((type) =>
-                                BoringAvatars(name: name, colors: colors, type: type))
+                            .map((type) => BoringAvatars(
+                                name: name, colors: colors, type: type))
                             .toList(),
                         ...BoringAvatarsType.values
                             .map((type) => BoringAvatars(
@@ -123,7 +123,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                                   square: true,
                                 ))
                             .toList(),
-
                         ...BoringAvatarsType.values
                             .map((type) => AnimatedBoringAvatars(
                                   duration: const Duration(milliseconds: 300),
@@ -141,15 +140,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                                   square: true,
                                 ))
                             .toList(),
-
                         ...BoringAvatarsType.values
                             .map((type) => AnimatedBoringAvatars(
-                          duration: const Duration(milliseconds: 900),
-                          curve: Curves.bounceOut,
-                          name: name,
-                          colors: colors,
-                          type: type,
-                        ))
+                                  duration: const Duration(milliseconds: 900),
+                                  curve: Curves.bounceOut,
+                                  name: name,
+                                  colors: colors,
+                                  type: type,
+                                ))
                             .toList(),
                       ],
                     ),

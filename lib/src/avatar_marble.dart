@@ -126,7 +126,7 @@ class AvatarMarblePainter extends AvatarCustomPainter {
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     final blur = MaskFilter.blur(
       BlurStyle.normal,
-      7 * (size.width / boxSize),
+      cX(14),
     );
 
     Paint paintFill = Paint()
@@ -139,8 +139,8 @@ class AvatarMarblePainter extends AvatarCustomPainter {
         "M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z",
         rotate: p.element1Rotate,
         scale: p.element1Scale,
-        transformX: p.element1TranslateX,
-        transformY: p.element1TranslateY);
+        translateX: p.element1TranslateX,
+        translateY: p.element1TranslateY);
 
     Paint paintFill1 = Paint()
       ..style = PaintingStyle.fill
@@ -152,8 +152,8 @@ class AvatarMarblePainter extends AvatarCustomPainter {
         "M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z",
         rotate: p.element1Rotate, // Not bug
         scale: p.element2Scale,
-        transformX: p.element2TranslateX,
-        transformY: p.element2TranslateY);
+        translateX: p.element2TranslateX,
+        translateY: p.element2TranslateY);
     final paintFill2 = Paint()
       ..style = PaintingStyle.fill
       ..blendMode = BlendMode.overlay
@@ -165,7 +165,8 @@ class AvatarMarblePainter extends AvatarCustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarMarblePainter && oldDelegate.properties != properties;
+    return oldDelegate is AvatarMarblePainter &&
+        oldDelegate.properties != properties;
   }
 }
 
@@ -205,7 +206,6 @@ class AnimatedAvatarMarble extends ImplicitlyAnimatedWidget {
     properties.add(DiagnosticsProperty<List<Color>?>('name', colors));
     properties.add(DiagnosticsProperty<AvatarMarbleData>('data', data));
     properties.add(DiagnosticsProperty<Size>('size', size));
-
   }
 }
 

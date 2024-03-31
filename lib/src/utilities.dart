@@ -13,8 +13,13 @@ List<Color> defaultBoringAvatarsColors = [
 ];
 
 int getNumber(String name) {
-  if (name.codeUnits.isEmpty) return 0;
-  return name.codeUnits.reduce((a, b) => a + b);
+  if (name.isEmpty) return 0;
+
+  int hash = name.codeUnits.reduce((hash, character) {
+    return (((hash << 5) - hash) + character) & 0xFFFFFFFF; // Converted to 32bit integer
+  });
+
+  return hash.toSigned(32).abs();
 }
 
 int getModulus(int num, int max) => num % max;

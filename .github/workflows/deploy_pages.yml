@@ -31,7 +31,7 @@ jobs:
         working-directory: ./example
 
       - name: Build
-        run: flutter build web --wasm
+        run: flutter build web --wasm --base-href "/flutter_boring_avatars/"
         working-directory: ./example
 
       - name: Deploy

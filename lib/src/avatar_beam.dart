@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './utilities.dart';
-import 'dart:ui';
 import 'avatar_base.dart';
 import 'package:flutter/foundation.dart';
 
@@ -111,9 +110,9 @@ class AvatarBeamData {
   }
 
   AvatarBeamData.empty() {
-    wrapperColor = Color.fromRGBO(255, 255, 255, 0);
-    faceColor = Color.fromRGBO(255, 255, 255, 0);
-    backgroundColor = Color.fromRGBO(255, 255, 255, 0);
+    wrapperColor = const Color.fromRGBO(255, 255, 255, 0);
+    faceColor = const Color.fromRGBO(255, 255, 255, 0);
+    backgroundColor = const Color.fromRGBO(255, 255, 255, 0);
     wrapperTranslateX = 0;
     wrapperTranslateY = 0;
     wrapperRotate = 0;
@@ -131,7 +130,7 @@ class AvatarBeamData {
   AvatarBeamData.generate(String name, [List<Color>? colors]) {
     colors ??= defaultBoringAvatarsColors;
     const double boxSize = 36;
-    final numFromName = getNumber(name);
+    final numFromName = getHashCode(name);
     final range = colors.length;
     wrapperColor = getRandomColor<Color>(numFromName, colors, range);
     final preTranslateX = getUnit(numFromName, 10, 1).toDouble();

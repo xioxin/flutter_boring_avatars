@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './utilities.dart';
-import 'dart:ui';
 import 'avatar_base.dart';
 import 'package:flutter/foundation.dart';
 
@@ -53,7 +52,7 @@ class AvatarMarbleData {
   AvatarMarbleData.generate(String name, [List<Color>? colors]) {
     colors ??= defaultBoringAvatarsColors;
     const double boxSize = 80;
-    final numFromName = getNumber(name);
+    final numFromName = getHashCode(name);
     final range = colors.length;
     int i = 0;
     bgColor = getRandomColor(numFromName + i, colors, range);

@@ -1,7 +1,4 @@
 import 'dart:math';
-
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 List<Color> defaultBoringAvatarsColors = [
@@ -12,7 +9,7 @@ List<Color> defaultBoringAvatarsColors = [
   const Color(0xff009989)
 ];
 
-int getNumber(String name) {
+int getHashCode(String name) {
   if (name.isEmpty) return 0;
 
   int hash = name.codeUnits.reduce((hash, character) {

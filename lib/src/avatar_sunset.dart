@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import './utilities.dart';
-import 'dart:ui';
 import 'avatar_base.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,7 +18,7 @@ class AvatarSunsetData {
 
   AvatarSunsetData.generate(String name, [List<Color>? colors]) {
     colors ??= defaultBoringAvatarsColors;
-    final numFromName = getNumber(name);
+    final numFromName = getHashCode(name);
     final range = colors.length;
     colorList = List.generate(
         4, (i) => getRandomColor<Color>(numFromName + i, colors!, range));

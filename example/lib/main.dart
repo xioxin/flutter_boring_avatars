@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -24,7 +23,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     super.initState();
   }
 
-  List<Color> colors = [
+  List<Color> colors = const [
     Color(0xffA3A948),
     Color(0xffEDB92E),
     Color(0xffF85931),
@@ -88,14 +87,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   ...colors.asMap().entries.map((e) => Padding(
-                        padding: EdgeInsets.only(left: 8),
+                        padding: const EdgeInsets.only(left: 8),
                         child: ElevatedButton(
                             onPressed: () {
                               selectColor(e.key);
                             },
                             child: Container(),
-                            style: ElevatedButton.styleFrom(
-                                primary: e.value, minimumSize: Size(50, 50))),
+                            style: ElevatedButton.styleFrom(backgroundColor: e.value, minimumSize: const Size(50, 50))),
                       ))
                 ],
               ),
@@ -105,7 +103,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 child: Center(
                   child: Center(
                     child: GridView.count(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
                       childAspectRatio: 1.0,

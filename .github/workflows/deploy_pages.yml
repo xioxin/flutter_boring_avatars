@@ -26,6 +26,9 @@ jobs:
       - name: Enable Flutter Web
         run: flutter config --enable-web
 
+      - name: Change Directory
+        run: cd example
+
       - name: Download Dependencies
         run: flutter pub get
 

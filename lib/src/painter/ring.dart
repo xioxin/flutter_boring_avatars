@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
-import '../color_palette.dart';
+import '../palette.dart';
 
 const List<String> _avatarRingPath = [
   'M0 0h90v45H0z',

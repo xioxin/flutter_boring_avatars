@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'painter.dart';
-import 'color_palette.dart';
+import 'palette.dart';
 
 class DefaultBoringAvatarPalette extends InheritedWidget {
   const DefaultBoringAvatarPalette({

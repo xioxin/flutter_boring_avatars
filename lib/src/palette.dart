@@ -17,16 +17,19 @@ class BoringAvatarPalette {
 
   @override
   bool operator ==(Object other) {
-    if (!(other is BoringAvatarPalette)) return false;
-    if (listEquals(this.colors, other.colors)) return true;
+    if (other is! BoringAvatarPalette) return false;
+    if (listEquals(colors, other.colors)) return true;
     return false;
   }
 
   static const BoringAvatarPalette defaultPalette = BoringAvatarPalette([
-    const Color(0xffA3A948),
-    const Color(0xffEDB92E),
-    const Color(0xffF85931),
-    const Color(0xffCE1836),
-    const Color(0xff009989)
+    Color(0xffA3A948),
+    Color(0xffEDB92E),
+    Color(0xffF85931),
+    Color(0xffCE1836),
+    Color(0xff009989)
   ]);
+
+  @override
+  toString() => 'BoringAvatarPalette($colors)';
 }

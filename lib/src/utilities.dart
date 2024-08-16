@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 
 int boringAvatarHashCode(String name) {
   if (name.isEmpty) return 0;
-
   int hash = name.codeUnits.reduce((hash, character) {
     return (((hash << 5) - hash) + character) &
         0xFFFFFFFF; // Converted to 32bit integer
   });
-
   return hash.toSigned(32).abs();
 }
 

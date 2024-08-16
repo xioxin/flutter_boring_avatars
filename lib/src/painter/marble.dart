@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
 
-import '../color_palette.dart';
+import '../palette.dart';
 
 class BoringAvatarMarbleData extends BoringAvatarData {
   late Color bgColor;

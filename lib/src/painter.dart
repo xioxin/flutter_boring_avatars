@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'painter/cross.dart';
 import 'utilities.dart';
-import 'color_palette.dart';
+import 'palette.dart';
 import 'painter/bauhaus.dart';
 import 'painter/beam.dart';
 import 'painter/marble.dart';

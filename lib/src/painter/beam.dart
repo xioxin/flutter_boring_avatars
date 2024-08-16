@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
-import '../color_palette.dart';
+import '../palette.dart';
 
 class BoringAvatarBeamData extends BoringAvatarData {
   late Color wrapperColor;

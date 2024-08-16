@@ -2,7 +2,7 @@ library flutter_boring_avatars;
 
 export './src/widget.dart';
 export './src/inherited.dart';
-export './src/color_palette.dart';
+export './src/palette.dart';
 export './src/utilities.dart' show boringAvatarHashCode, boringAvatarHashCodeOld;
 
 export './src/painter.dart';

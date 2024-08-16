@@ -1,241 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_boring_avatars/src/color_palette.dart';
+import 'package:flutter_boring_avatars/src/painter/cross.dart';
+import 'package:flutter_boring_avatars/src/palette.dart';
 import 'painter.dart';
 import 'inherited.dart';
-
-//
-// BoringAvatarsType defaultBoringAvatarsType = BoringAvatarsType.marble;
-//
-// class BoringAvatars extends StatelessWidget {
-//   static setDefaultColors(List<Color> colors) {
-//     defaultBoringAvatarsColors = colors;
-//   }
-//
-//   static setDefaultType(BoringAvatarsType type) {
-//     defaultBoringAvatarsType = type;
-//   }
-//
-//   final BoringAvatarsType? type;
-//   final String name;
-//   final List<Color>? colors;
-//   final bool square;
-//
-//   const BoringAvatars(
-//       {Key? key,
-//       required this.name,
-//       this.type,
-//       this.colors,
-//       this.square = false})
-//       : super(key: key);
-//
-//   getPainter() {
-//     final type = this.type ?? defaultBoringAvatarsType;
-//     switch (type) {
-//       case BoringAvatarsType.bauhaus:
-//         return AvatarBauhausPainter(name, colors);
-//       case BoringAvatarsType.marble:
-//         return AvatarMarblePainter(name, colors);
-//       case BoringAvatarsType.beam:
-//         return AvatarBeamPainter(name, colors);
-//       case BoringAvatarsType.pixel:
-//         return AvatarPixelPainter(name, colors);
-//       case BoringAvatarsType.ring:
-//         return AvatarRingPainter(name, colors);
-//       case BoringAvatarsType.sunset:
-//         return AvatarSunsetPainter(name, colors);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final avatar = AspectRatio(
-//       aspectRatio: 1,
-//       child: LayoutBuilder(
-//           builder: (BuildContext context, BoxConstraints constraints) {
-//         return CustomPaint(
-//           size: Size(constraints.maxWidth, constraints.maxHeight),
-//           painter: getPainter(),
-//         );
-//       }),
-//     );
-//     if (square) return avatar;
-//     return ClipOval(child: avatar);
-//   }
-//
-//   @override
-//   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-//     super.debugFillProperties(properties);
-//     properties.add(DiagnosticsProperty<BoringAvatarsType?>('type', type,
-//         defaultValue: defaultBoringAvatarsType));
-//     properties.add(DiagnosticsProperty<String>('name', name));
-//     properties.add(DiagnosticsProperty<List<Color>?>('colors', colors,
-//         defaultValue: defaultBoringAvatarsColors));
-//     properties.add(DiagnosticsProperty<bool>('square', square));
-//   }
-// }
-//
-// class AnimatedBoringAvatars extends StatelessWidget {
-//   static setDefaultColors(List<Color> colors) {
-//     defaultBoringAvatarsColors = colors;
-//   }
-//
-//   static setDefaultType(BoringAvatarsType type) {
-//     defaultBoringAvatarsType = type;
-//   }
-//
-//   final BoringAvatarsType? type;
-//   final String name;
-//   final List<Color>? colors;
-//
-//   final Curve curve;
-//   final Duration duration;
-//   final VoidCallback? onEnd;
-//   final bool square;
-//
-//   const AnimatedBoringAvatars({
-//     Key? key,
-//     required this.duration,
-//     required this.name,
-//     this.type,
-//     this.colors,
-//     this.curve = Curves.linear,
-//     this.onEnd,
-//     this.square = false,
-//   }) : super(key: key);
-//
-//   getWidget(Size size) {
-//     final type = this.type ?? defaultBoringAvatarsType;
-//     switch (type) {
-//       case BoringAvatarsType.bauhaus:
-//         return AnimatedAvatarBauhaus(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//       case BoringAvatarsType.marble:
-//         return AnimatedAvatarMarble(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//       case BoringAvatarsType.beam:
-//         return AnimatedAvatarBeam(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//       case BoringAvatarsType.pixel:
-//         return AnimatedAvatarPixel(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//       case BoringAvatarsType.ring:
-//         return AnimatedAvatarRing(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//       case BoringAvatarsType.sunset:
-//         return AnimatedAvatarSunset(
-//             name: name,
-//             colors: colors,
-//             size: size,
-//             onEnd: onEnd,
-//             curve: curve,
-//             duration: duration);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final avatar = AspectRatio(
-//         aspectRatio: 1,
-//         child: LayoutBuilder(
-//             builder: (BuildContext context, BoxConstraints constraints) {
-//           final size = Size(constraints.maxWidth, constraints.maxHeight);
-//           final type = this.type ?? defaultBoringAvatarsType;
-//           switch (type) {
-//             case BoringAvatarsType.bauhaus:
-//               return AnimatedAvatarBauhaus(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//             case BoringAvatarsType.marble:
-//               return AnimatedAvatarMarble(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//             case BoringAvatarsType.beam:
-//               return AnimatedAvatarBeam(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//             case BoringAvatarsType.pixel:
-//               return AnimatedAvatarPixel(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//             case BoringAvatarsType.ring:
-//               return AnimatedAvatarRing(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//             case BoringAvatarsType.sunset:
-//               return AnimatedAvatarSunset(
-//                   name: name,
-//                   colors: colors,
-//                   size: size,
-//                   onEnd: onEnd,
-//                   curve: curve,
-//                   duration: duration);
-//           }
-//         }));
-//     if (square) return avatar;
-//     return ClipOval(child: avatar);
-//   }
-//
-//   @override
-//   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-//     super.debugFillProperties(properties);
-//     properties.add(DiagnosticsProperty<BoringAvatarsType?>('type', type,
-//         defaultValue: defaultBoringAvatarsType));
-//     properties.add(DiagnosticsProperty<String>('name', name));
-//     properties.add(DiagnosticsProperty<List<Color>?>('colors', colors,
-//         defaultValue: defaultBoringAvatarsColors));
-//     properties.add(DiagnosticsProperty<bool>('square', square));
-//     properties.add(DiagnosticsProperty<Curve>('curve', curve));
-//     properties.add(DiagnosticsProperty<Duration>('duration', duration));
-//     properties.add(DiagnosticsProperty<VoidCallback?>('onEnd', onEnd));
-//   }
-// }
-//
 
 class BoringAvatarCanvas extends StatelessWidget {
   final BoringAvatarData avatarData;
@@ -244,12 +12,9 @@ class BoringAvatarCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: avatarData.painter,
-      ),
+    return CustomPaint(
+      size: Size.infinite,
+      painter: avatarData.painter,
     );
   }
 
@@ -266,8 +31,14 @@ class BoringAvatar extends StatelessWidget {
   final String name;
   final BoringAvatarType? type;
   final BoringAvatarPalette? palette;
+  final bool circular;
 
-  const BoringAvatar({super.key, required this.name, this.type, this.palette});
+  const BoringAvatar(
+      {super.key,
+      required this.name,
+      this.type,
+      this.palette,
+      this.circular = false});
 
   @override
   Widget build(BuildContext context) {
@@ -279,9 +50,22 @@ class BoringAvatar extends StatelessWidget {
         BoringAvatarType.marble;
     final avatarData =
         BoringAvatarData.generate(name: name, type: type, palette: palette);
-    return BoringAvatarCanvas(
-      avatarData: avatarData,
+    final avatar = AspectRatio(
+      aspectRatio: 1,
+      child: BoringAvatarCanvas(avatarData: avatarData),
     );
+    if (circular) ClipOval(child: avatar);
+    return avatar;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<String>('name', name));
+    properties
+        .add(DiagnosticsProperty<BoringAvatarPalette?>('palette', palette));
+    properties.add(DiagnosticsProperty<BoringAvatarType?>('type', type));
+    properties.add(DiagnosticsProperty<bool>('circular', circular));
   }
 }
 
@@ -305,6 +89,9 @@ class AnimatedBoringCanvas extends ImplicitlyAnimatedWidget {
     super.debugFillProperties(properties);
     properties
         .add(DiagnosticsProperty<BoringAvatarData>('avatarData', avatarData));
+    properties.add(DiagnosticsProperty<Curve>('curve', curve));
+    properties.add(DiagnosticsProperty<Duration>('duration', duration));
+    properties.add(DiagnosticsProperty<VoidCallback?>('onEnd', onEnd));
   }
 }
 
@@ -348,15 +135,17 @@ class AnimatedBoringAvatar extends StatelessWidget {
   final VoidCallback? onEnd;
   final Curve curve;
 
-  const AnimatedBoringAvatar({
-    super.key,
-    required this.name,
-    required this.duration,
-    this.curve = Curves.linear,
-    this.onEnd,
-    this.type,
-    this.palette,
-  });
+  final bool circular;
+
+  const AnimatedBoringAvatar(
+      {super.key,
+      required this.name,
+      required this.duration,
+      this.curve = Curves.linear,
+      this.onEnd,
+      this.type,
+      this.palette,
+      this.circular = false});
 
   @override
   Widget build(BuildContext context) {
@@ -368,12 +157,30 @@ class AnimatedBoringAvatar extends StatelessWidget {
         BoringAvatarType.marble;
     final avatarData =
         BoringAvatarData.generate(name: name, type: type, palette: palette);
-    return AnimatedBoringCanvas(
-      avatarData: avatarData,
-      onEnd: onEnd,
-      curve: curve,
-      duration: duration,
+    final avatar = AspectRatio(
+      aspectRatio: 1,
+      child: AnimatedBoringCanvas(
+        avatarData: avatarData,
+        onEnd: onEnd,
+        curve: curve,
+        duration: duration,
+      ),
     );
+    if (circular) ClipOval(child: avatar);
+    return avatar;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<String>('name', name));
+    properties
+        .add(DiagnosticsProperty<BoringAvatarPalette?>('palette', palette));
+    properties.add(DiagnosticsProperty<BoringAvatarType?>('type', type));
+    properties.add(DiagnosticsProperty<bool>('circular', circular));
+    properties.add(DiagnosticsProperty<Curve>('curve', curve));
+    properties.add(DiagnosticsProperty<Duration>('duration', duration));
+    properties.add(DiagnosticsProperty<VoidCallback?>('onEnd', onEnd));
   }
 }
 
@@ -385,15 +192,58 @@ class BoringAvatarDecoration extends Decoration {
   });
 
   @override
+  bool get isComplex => false;
+
+  @override
+  BoringAvatarDecoration? lerpFrom(Decoration? a, double t) {
+    assert(debugAssertIsValid());
+    if (a is BoringAvatarDecoration) {
+      if(avatarData.runtimeType != a.avatarData.runtimeType) {
+        return BoringAvatarDecoration(
+          avatarData: BoringAvatarCrossData(
+              begin: a.avatarData,
+              end: avatarData,
+              t: t
+          ),
+        );
+      }
+      return BoringAvatarDecoration(
+        avatarData: a.avatarData.lerp(avatarData, t),
+      );
+    }
+    return this;
+  }
+
+  @override
+  BoringAvatarDecoration? lerpTo(Decoration? b, double t) {
+    assert(debugAssertIsValid());
+    if (b is BoringAvatarDecoration) {
+      if(avatarData.runtimeType != b.avatarData.runtimeType) {
+        return BoringAvatarDecoration(
+          avatarData: BoringAvatarCrossData(
+              begin: avatarData,
+              end: b.avatarData,
+              t: t
+          ),
+        );
+      }
+      return BoringAvatarDecoration(
+        avatarData: avatarData.lerp(b.avatarData, t),
+      );
+    }
+    return this;
+  }
+
+  @override
   BoxPainter createBoxPainter([void Function()? onChanged]) {
-    return BoringAvatarDecorationPainter(painter: avatarData.painter);
+    return _BoringAvatarDecorationPainter(avatarData.painter, onChanged);
   }
 }
 
-class BoringAvatarDecorationPainter extends BoxPainter {
+class _BoringAvatarDecorationPainter extends BoxPainter {
   CustomPainter painter;
 
-  BoringAvatarDecorationPainter({required this.painter});
+  _BoringAvatarDecorationPainter(this.painter, [super.onChanged]);
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {

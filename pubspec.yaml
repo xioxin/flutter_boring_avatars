@@ -1,10 +1,10 @@
 name: flutter_boring_avatars
 description: Flutter implementation of boring avatars that generates custom, round avatars from any username and color palette.
-version: 1.1.0
+version: 2.0.0
 homepage: https://github.com/xioxin/flutter_boring_avatars
 
 environment:
-  sdk: ">=2.14.0 <4.0.0"
+  sdk: ">=2.17.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:

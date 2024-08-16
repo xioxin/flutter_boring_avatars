@@ -18,6 +18,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   TextEditingController textController = TextEditingController.fromValue(
       const TextEditingValue(text: 'Bessie Coleman'));
 
+  BoringAvatarType type = BoringAvatarType.beam;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +64,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final palette = BoringAvatarPalette(colors);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -74,17 +77,34 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: textController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      child: TextField(
+                        controller: textController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (String? v) {
+                          setState(() {
+                            name = v ?? '';
+                          });
+                        },
                       ),
-                      onChanged: (String? v) {
-                        setState(() {
-                          name = v ?? '';
-                        });
-                      },
-                    ),
+                  ),
+                  SegmentedButton<BoringAvatarType>(
+                    segments: BoringAvatarType.values
+                        .map((v) => ButtonSegment(
+                            value: v,
+                            icon: BoringAvatar(
+                              name: v.name,
+                              type: v,
+                            ),
+                            label: Text(v.name)))
+                        .toList(),
+                    selected: {type},
+                    onSelectionChanged: (v) {
+                      setState(() {
+                        type = v.first;
+                      });
+                    },
                   ),
                   ...colors.asMap().entries.map((e) => Padding(
                         padding: const EdgeInsets.only(left: 8),
@@ -93,7 +113,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                               selectColor(e.key);
                             },
                             child: Container(),
-                            style: ElevatedButton.styleFrom(backgroundColor: e.value, minimumSize: const Size(50, 50))),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: e.value,
+                                minimumSize: const Size(50, 50))),
                       ))
                 ],
               ),
@@ -107,46 +129,20 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
                       childAspectRatio: 1.0,
-                      crossAxisCount: BoringAvatarsType.values.length,
+                      crossAxisCount: BoringAvatarType.values.length,
                       children: [
-                        ...BoringAvatarsType.values
-                            .map((type) => BoringAvatars(
-                                name: name, colors: colors, type: type))
-                            .toList(),
-                        ...BoringAvatarsType.values
-                            .map((type) => BoringAvatars(
-                                  name: name,
-                                  colors: colors,
-                                  type: type,
-                                  square: true,
-                                ))
-                            .toList(),
-                        ...BoringAvatarsType.values
-                            .map((type) => AnimatedBoringAvatars(
-                                  duration: const Duration(milliseconds: 300),
-                                  name: name,
-                                  colors: colors,
-                                  type: type,
-                                ))
-                            .toList(),
-                        ...BoringAvatarsType.values
-                            .map((type) => AnimatedBoringAvatars(
-                                  duration: const Duration(milliseconds: 300),
-                                  name: name,
-                                  colors: colors,
-                                  type: type,
-                                  square: true,
-                                ))
-                            .toList(),
-                        ...BoringAvatarsType.values
-                            .map((type) => AnimatedBoringAvatars(
-                                  duration: const Duration(milliseconds: 900),
-                                  curve: Curves.bounceOut,
-                                  name: name,
-                                  colors: colors,
-                                  type: type,
-                                ))
-                            .toList(),
+                        BoringAvatar(
+                          name: name,
+                          palette: palette,
+                          type: type,
+                        ),
+                        AnimatedBoringAvatar(
+                          duration: const Duration(milliseconds: 800),
+                          name: name,
+                          curve: Curves.easeInOutCubicEmphasized,
+                          palette: palette,
+                          type: type,
+                        )
                       ],
                     ),
                   ),

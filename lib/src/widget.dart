@@ -31,14 +31,17 @@ class BoringAvatar extends StatelessWidget {
   final String name;
   final BoringAvatarType? type;
   final BoringAvatarPalette? palette;
-  final bool circular;
+  final ShapeBorder? shape;
+  final Clip clipBehavior;
 
-  const BoringAvatar(
-      {super.key,
-      required this.name,
-      this.type,
-      this.palette,
-      this.circular = false});
+  const BoringAvatar({
+    super.key,
+    required this.name,
+    this.type,
+    this.palette,
+    this.shape,
+    this.clipBehavior = Clip.antiAlias,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +57,13 @@ class BoringAvatar extends StatelessWidget {
       aspectRatio: 1,
       child: BoringAvatarCanvas(avatarData: avatarData),
     );
-    if (circular) ClipOval(child: avatar);
+    if (shape != null) {
+      return Material(
+        shape: shape,
+        clipBehavior: clipBehavior,
+        child: avatar,
+      );
+    }
     return avatar;
   }
 
@@ -65,7 +74,8 @@ class BoringAvatar extends StatelessWidget {
     properties
         .add(DiagnosticsProperty<BoringAvatarPalette?>('palette', palette));
     properties.add(DiagnosticsProperty<BoringAvatarType?>('type', type));
-    properties.add(DiagnosticsProperty<bool>('circular', circular));
+    properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape));
+    properties.add(DiagnosticsProperty<Clip>('clipBehavior', clipBehavior));
   }
 }
 
@@ -135,17 +145,20 @@ class AnimatedBoringAvatar extends StatelessWidget {
   final VoidCallback? onEnd;
   final Curve curve;
 
-  final bool circular;
+  final ShapeBorder? shape;
+  final Clip clipBehavior;
 
-  const AnimatedBoringAvatar(
-      {super.key,
-      required this.name,
-      required this.duration,
-      this.curve = Curves.linear,
-      this.onEnd,
-      this.type,
-      this.palette,
-      this.circular = false});
+  const AnimatedBoringAvatar({
+    super.key,
+    required this.name,
+    required this.duration,
+    this.curve = Curves.linear,
+    this.onEnd,
+    this.type,
+    this.palette,
+    this.shape,
+    this.clipBehavior = Clip.antiAlias,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +179,13 @@ class AnimatedBoringAvatar extends StatelessWidget {
         duration: duration,
       ),
     );
-    if (circular) ClipOval(child: avatar);
+    if (shape != null) {
+      return Material(
+        shape: shape,
+        clipBehavior: clipBehavior,
+        child: avatar,
+      );
+    }
     return avatar;
   }
 
@@ -177,10 +196,11 @@ class AnimatedBoringAvatar extends StatelessWidget {
     properties
         .add(DiagnosticsProperty<BoringAvatarPalette?>('palette', palette));
     properties.add(DiagnosticsProperty<BoringAvatarType?>('type', type));
-    properties.add(DiagnosticsProperty<bool>('circular', circular));
     properties.add(DiagnosticsProperty<Curve>('curve', curve));
     properties.add(DiagnosticsProperty<Duration>('duration', duration));
     properties.add(DiagnosticsProperty<VoidCallback?>('onEnd', onEnd));
+    properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape));
+    properties.add(DiagnosticsProperty<Clip>('clipBehavior', clipBehavior));
   }
 }
 
@@ -198,13 +218,10 @@ class BoringAvatarDecoration extends Decoration {
   BoringAvatarDecoration? lerpFrom(Decoration? a, double t) {
     assert(debugAssertIsValid());
     if (a is BoringAvatarDecoration) {
-      if(avatarData.runtimeType != a.avatarData.runtimeType) {
+      if (avatarData.runtimeType != a.avatarData.runtimeType) {
         return BoringAvatarDecoration(
-          avatarData: BoringAvatarCrossData(
-              begin: a.avatarData,
-              end: avatarData,
-              t: t
-          ),
+          avatarData: BoringAvatarCrossData.mixed(
+              begin: a.avatarData, end: avatarData, t: t),
         );
       }
       return BoringAvatarDecoration(
@@ -218,13 +235,10 @@ class BoringAvatarDecoration extends Decoration {
   BoringAvatarDecoration? lerpTo(Decoration? b, double t) {
     assert(debugAssertIsValid());
     if (b is BoringAvatarDecoration) {
-      if(avatarData.runtimeType != b.avatarData.runtimeType) {
+      if (avatarData.runtimeType != b.avatarData.runtimeType) {
         return BoringAvatarDecoration(
-          avatarData: BoringAvatarCrossData(
-              begin: avatarData,
-              end: b.avatarData,
-              t: t
-          ),
+          avatarData: BoringAvatarCrossData.mixed(
+              begin: avatarData, end: b.avatarData, t: t),
         );
       }
       return BoringAvatarDecoration(
@@ -250,5 +264,3 @@ class _BoringAvatarDecorationPainter extends BoxPainter {
     painter.paint(canvas, (configuration.size ?? Size.zero));
   }
 }
-
-// todo: animation Decoration

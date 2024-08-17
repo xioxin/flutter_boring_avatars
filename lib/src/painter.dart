@@ -146,7 +146,7 @@ class BoringAvatarDataTween extends Tween<BoringAvatarData> {
     if (begin.runtimeType == end.runtimeType) {
       return begin!.lerp(end!, t);
     } else {
-      return BoringAvatarCrossData(begin: begin!, end: end!, t: t);
+      return BoringAvatarCrossData.mixed(begin: begin!, end: end!, t: t);
     }
   }
 }

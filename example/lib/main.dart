@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:random_name_generator/random_name_generator.dart';
+
+import 'colors.dart';
 
 void main() {
   runApp(const MaterialApp(home: MyApp()));
@@ -20,18 +24,112 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   BoringAvatarType type = BoringAvatarType.beam;
 
+  RandomNames randomNames = RandomNames(Zone.us);
+
+  late List<String> names;
+
   @override
   void initState() {
+    colors = getRandomColors().toList();
+    names = List.generate(200, (index) => randomNames.fullName());
     super.initState();
   }
 
-  List<Color> colors = const [
-    Color(0xffA3A948),
-    Color(0xffEDB92E),
-    Color(0xffF85931),
-    Color(0xffCE1836),
-    Color(0xff009989)
-  ];
+  late List<Color> colors;
+
+  Widget controlBar() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          SegmentedButton<BoringAvatarType>(
+            showSelectedIcon: false,
+            segments: BoringAvatarType.values
+                .map(
+                  (type) => ButtonSegment(
+                    value: type,
+                    tooltip: type.name,
+                    icon: SizedBox(
+                      width: 24,
+                      child: BoringAvatar(
+                        name: type.name,
+                        type: type,
+                        shape: const OvalBorder(),
+                      ),
+                    ),
+                    label: Text(type.name, maxLines: 1),
+                  ),
+                )
+                .toList(),
+            style: SegmentedButton.styleFrom(padding: const EdgeInsets.all(2)),
+            selected: {type},
+            onSelectionChanged: (v) {
+              setState(() {
+                type = v.first;
+              });
+            },
+          ),
+          const SizedBox(width: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  ...[0, 1, 2, 3, 4].expand((key) => [
+                        colorButton(key),
+                        const SizedBox(width: 8),
+                      ]),
+                  FilledButton(
+                    child: const Text("Random"),
+                    onPressed: () {
+                      setState(() {
+                        colors = getRandomColors();
+                      });
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    child: const Text("Copy"),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(
+                          text:
+                              "const BoringAvatarPalette([${colors.map((e) => "Color(0x${e.value.toRadixString(16)})").join(", ")}])"));
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            child: const Text("Random Names"),
+            onPressed: () {
+              setState(() {
+                names = List.generate(200, (index) => randomNames.fullName());
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  colorButton(int index) {
+    return FilledButton(
+      onPressed: () {
+        selectColor(index);
+      },
+      child: const SizedBox(
+        width: 32,
+        height: 32,
+      ),
+      style: FilledButton.styleFrom(
+        backgroundColor: colors[index],
+        padding: const EdgeInsets.all(0),
+        minimumSize: Size.zero,
+      ),
+    );
+  }
 
   selectColor(int index) {
     showDialog(
@@ -62,9 +160,57 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     );
   }
 
+  avatar(int index) {
+    final name = names[index];
+    return Column(
+      children: [
+        Expanded(
+          child: AnimatedBoringAvatar(
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeInOutCubicEmphasized,
+            name: name,
+            palette: BoringAvatarPalette(colors),
+            type: type,
+            shape: const OvalBorder(),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 24,
+          child: TextField(
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.all(Radius.circular(32)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
+                borderRadius: const BorderRadius.all(Radius.circular(32)),
+              ),
+            ),
+            controller: TextEditingController.fromValue(
+              TextEditingValue(text: name),
+            ),
+            style: TextStyle(
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+            onChanged: (v) {
+              setState(() {
+                names[index] = v;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final palette = BoringAvatarPalette(colors);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -72,78 +218,23 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextField(
-                        controller: textController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (String? v) {
-                          setState(() {
-                            name = v ?? '';
-                          });
-                        },
-                      ),
-                  ),
-                  SegmentedButton<BoringAvatarType>(
-                    segments: BoringAvatarType.values
-                        .map((v) => ButtonSegment(
-                            value: v,
-                            icon: BoringAvatar(
-                              name: v.name,
-                              type: v,
-                            ),
-                            label: Text(v.name)))
-                        .toList(),
-                    selected: {type},
-                    onSelectionChanged: (v) {
-                      setState(() {
-                        type = v.first;
-                      });
-                    },
-                  ),
-                  ...colors.asMap().entries.map((e) => Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              selectColor(e.key);
-                            },
-                            child: Container(),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: e.value,
-                                minimumSize: const Size(50, 50))),
-                      ))
-                ],
-              ),
-            ),
+            controlBar(),
             Expanded(
               child: Center(
                 child: Center(
                   child: Center(
-                    child: GridView.count(
-                      padding: const EdgeInsets.all(16),
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                      childAspectRatio: 1.0,
-                      crossAxisCount: BoringAvatarType.values.length,
-                      children: [
-                        BoringAvatar(
-                          name: name,
-                          palette: palette,
-                          type: type,
-                        ),
-                        AnimatedBoringAvatar(
-                          duration: const Duration(milliseconds: 800),
-                          name: name,
-                          curve: Curves.easeInOutCubicEmphasized,
-                          palette: palette,
-                          type: type,
-                        )
-                      ],
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(32),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: names.length,
+                      itemBuilder: (context, index) {
+                        return avatar(index);
+                      },
                     ),
                   ),
                 ),

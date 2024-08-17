@@ -7,14 +7,23 @@ class BoringAvatarCrossData extends BoringAvatarData {
   double t;
 
   BoringAvatarCrossData({
-    required BoringAvatarData begin,
+    required this.begin,
     required this.end,
     required this.t,
+  });
+
+  static BoringAvatarData mixed({
+    required BoringAvatarData begin,
+    required BoringAvatarData end,
+    required double t,
   }) {
     if (begin is BoringAvatarCrossData) {
       begin = begin.t > 0.5 ? begin.end : begin.begin;
     }
-    this.begin = begin;
+    if (begin.runtimeType == end.runtimeType) {
+      return begin.lerp(end, t);
+    }
+    return BoringAvatarCrossData(begin: begin, end: end, t: t);
   }
 
   BoringAvatarCrossData copyWith({
@@ -38,11 +47,13 @@ class BoringAvatarCrossData extends BoringAvatarData {
     return BoringAvatarCrossPainter(this);
   }
 }
+
 class BoringAvatarCrossPainter extends AvatarCustomPainter {
   final BoringAvatarCrossData properties;
 
   @override
   double get boxSize => 80;
+
   BoringAvatarCrossPainter(this.properties);
 
   @override
@@ -51,7 +62,8 @@ class BoringAvatarCrossPainter extends AvatarCustomPainter {
     final p = properties;
     canvas.save();
     p.begin.painter.paint(canvas, size);
-    canvas.saveLayer(Offset.zero & size, Paint()..color = Colors.white.withOpacity(p.t));
+    canvas.saveLayer(
+        Offset.zero & size, Paint()..color = Colors.white.withOpacity(p.t));
     p.end.painter.paint(canvas, size);
     canvas.restore();
     canvas.restore();

@@ -6,7 +6,7 @@ description: Demonstrates how to use the flutter_boring_avatars plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ">=2.17.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -26,7 +26,8 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
-  flutter_colorpicker: ^1.0.3
+  flex_color_picker: ^3.5.1
+  random_name_generator: ^1.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,28 +1,28 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-List<Color> defaultBoringAvatarsColors = [
-  const Color(0xffA3A948),
-  const Color(0xffEDB92E),
-  const Color(0xffF85931),
-  const Color(0xffCE1836),
-  const Color(0xff009989)
-];
-
-int getHashCode(String name) {
+int boringAvatarHashCode(String name) {
   if (name.isEmpty) return 0;
-
   int hash = name.codeUnits.reduce((hash, character) {
-    return (((hash << 5) - hash) + character) & 0xFFFFFFFF; // Converted to 32bit integer
+    return (((hash << 5) - hash) + character) &
+        0xFFFFFFFF; // Converted to 32bit integer
   });
-
   return hash.toSigned(32).abs();
 }
 
+int boringAvatarHashCodeOld(String name) {
+  if (name.codeUnits.isEmpty) return 0;
+  return name.codeUnits.reduce((a, b) => a + b);
+}
+
 int getModulus(int num, int max) => num % max;
+
 int getDigit(int number, int ntn) => (number / pow(10, ntn) % 10).floor();
+
 bool getBoolean(int number, int ntn) => getDigit(number, ntn) % 2 == 0;
+
 double getAngle(double x, double y) => atan2(y, x) * 180 / pi;
+
 double getUnit(int number, int range, [int index = 0]) {
   int value = number % range;
   if (index > 0 && (getDigit(number, index) % 2) == 0) {
@@ -30,10 +30,6 @@ double getUnit(int number, int range, [int index = 0]) {
   } else {
     return (value).toDouble();
   }
-}
-
-T getRandomColor<T>(int number, List<T> colors, int range) {
-  return colors[(number) % range];
 }
 
 Color getContrast(Color color) {

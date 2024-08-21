@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import './utilities.dart';
-import 'avatar_base.dart';
-import 'package:flutter/foundation.dart';
+import '../utilities.dart';
+import '../painter.dart';
 
-class AvatarBauhausData {
+import '../palette.dart';
+
+class BoringAvatarBauhausData extends BoringAvatarData {
   late Color bgColor;
   late double element1TranslateX;
   late double element1TranslateY;
@@ -17,7 +18,8 @@ class AvatarBauhausData {
   late double element3TranslateY;
   late Color element3Color;
   late double element3Rotate;
-  AvatarBauhausData({
+
+  BoringAvatarBauhausData({
     required this.bgColor,
     required this.element1TranslateX,
     required this.element1TranslateY,
@@ -33,17 +35,18 @@ class AvatarBauhausData {
     required this.element3Rotate,
   });
 
-  AvatarBauhausData.generate(String name, [List<Color>? colors]) {
-    colors ??= defaultBoringAvatarsColors;
-    const double boxSize = 80;
+  BoringAvatarBauhausData.generate(
+      {required String name,
+      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
     final numFromName = getHashCode(name);
-    final range = colors.length;
+    const double boxSize = 80;
     final isSquare = getBoolean(numFromName, 2);
     int i = 0;
-    bgColor = getRandomColor(numFromName, colors, range);
+    bgColor = palette.getColor(numFromName);
 
     i = 1;
-    element1Color = getRandomColor(numFromName + i, colors, range);
+    element1Color = palette.getColor(numFromName + i);
     element1TranslateX =
         getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
     element1TranslateY =
@@ -52,14 +55,14 @@ class AvatarBauhausData {
     element1Height = isSquare ? boxSize : boxSize / 8;
 
     i = 2;
-    element2Color = getRandomColor(numFromName + i, colors, range);
+    element2Color = palette.getColor(numFromName + i);
     element2TranslateX =
         getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
     element2TranslateY =
         getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 2);
 
     i = 3;
-    element3Color = getRandomColor(numFromName + i, colors, range);
+    element3Color = palette.getColor(numFromName + i);
     element3TranslateX =
         getUnit(numFromName * (i + 1), boxSize ~/ 2 - (i + 17), 1);
     element3TranslateY =
@@ -67,11 +70,12 @@ class AvatarBauhausData {
     element3Rotate = getUnit(numFromName * (i + 1), 360);
   }
 
-  static AvatarBauhausData? lerp(
-      AvatarBauhausData? a, AvatarBauhausData? b, double t) {
-    a ??= AvatarBauhausData.generate('');
-    b ??= AvatarBauhausData.generate('');
-    return AvatarBauhausData(
+  @override
+  BoringAvatarData lerp(BoringAvatarData end, double t) {
+    assert(end is BoringAvatarBauhausData);
+    final a = this;
+    final b = end as BoringAvatarBauhausData;
+    return BoringAvatarBauhausData(
         bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
         element1TranslateX:
             lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
@@ -97,7 +101,7 @@ class AvatarBauhausData {
   operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    if (other is AvatarBauhausData) {
+    if (other is BoringAvatarBauhausData) {
       return bgColor == other.bgColor &&
           element1TranslateX == other.element1TranslateX &&
           element1TranslateY == other.element1TranslateY &&
@@ -131,24 +135,24 @@ class AvatarBauhausData {
         element3Color,
         element3Rotate,
       ]);
+
+  @override
+  get painter => AvatarBauhausPainter(this);
 }
 
 class AvatarBauhausPainter extends AvatarCustomPainter {
-  final AvatarBauhausData properties;
+  final BoringAvatarBauhausData properties;
 
   @override
   double get boxSize => 80;
 
-  AvatarBauhausPainter(String name, List<Color>? colors)
-      : properties = AvatarBauhausData.generate(name, colors);
-
-  AvatarBauhausPainter.data(this.properties);
+  AvatarBauhausPainter(this.properties);
 
   @override
   void paint(Canvas canvas, Size size) {
     this.size = size;
     final p = properties;
-
+    canvas.save();
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     canvas.drawRect(
         Rect.fromLTRB(0, 0, size.width, size.height), fillPaint(p.bgColor));
@@ -180,77 +184,12 @@ class AvatarBauhausPainter extends AvatarCustomPainter {
     canvas.transform(t3.storage);
     canvas.drawLine(Offset(0, size.width / 2),
         Offset(size.height, size.height / 2), strokePaint(p.element3Color, 2));
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return oldDelegate is AvatarBauhausPainter &&
         oldDelegate.properties != properties;
-  }
-}
-
-class AvatarBauhausDataTween extends Tween<AvatarBauhausData?> {
-  AvatarBauhausDataTween({AvatarBauhausData? begin, AvatarBauhausData? end})
-      : super(begin: begin, end: end);
-
-  @override
-  AvatarBauhausData? lerp(double t) => AvatarBauhausData.lerp(begin, end, t);
-}
-
-class AnimatedAvatarBauhaus extends ImplicitlyAnimatedWidget {
-  AnimatedAvatarBauhaus({
-    Key? key,
-    required this.name,
-    this.colors,
-    Curve curve = Curves.linear,
-    required Duration duration,
-    this.size = Size.zero,
-    VoidCallback? onEnd,
-  })  : data = AvatarBauhausData.generate(name, colors),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
-
-  final String name;
-  final List<Color>? colors;
-  final Size size;
-  final AvatarBauhausData data;
-
-  @override
-  AnimatedWidgetBaseState<AnimatedAvatarBauhaus> createState() =>
-      _AnimatedAvatarBauhausState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<String>('name', name));
-    properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
-    properties.add(DiagnosticsProperty<AvatarBauhausData>('data', data));
-    properties.add(DiagnosticsProperty<Size>('size', size));
-  }
-}
-
-class _AnimatedAvatarBauhausState
-    extends AnimatedWidgetBaseState<AnimatedAvatarBauhaus> {
-  AvatarBauhausDataTween? _data;
-
-  @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data,
-            (dynamic value) => AvatarBauhausDataTween(begin: value))
-        as AvatarBauhausDataTween?;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: widget.size,
-      painter: AvatarBauhausPainter.data(_data!.evaluate(animation)!),
-    );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarBauhausDataTween>('data', _data,
-        defaultValue: null));
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import './utilities.dart';
-import 'avatar_base.dart';
-import 'package:flutter/foundation.dart';
+import '../utilities.dart';
+import '../painter.dart';
 
-class AvatarMarbleData {
+import '../palette.dart';
+
+class BoringAvatarMarbleData extends BoringAvatarData {
   late Color bgColor;
   late Color element1Color;
   late double element1TranslateX;
@@ -15,7 +16,7 @@ class AvatarMarbleData {
   late double element2TranslateY;
   late double element2Scale;
 
-  AvatarMarbleData({
+  BoringAvatarMarbleData({
     required this.bgColor,
     required this.element1Color,
     required this.element1TranslateX,
@@ -28,44 +29,45 @@ class AvatarMarbleData {
     required this.element2Scale,
   });
 
-  static AvatarMarbleData? lerp(
-      AvatarMarbleData? a, AvatarMarbleData? b, double t) {
-    if (a == null || b == null) return a ?? b;
-    return AvatarMarbleData(
-      bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
-      element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
-      element1TranslateX:
-          lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
-      element1TranslateY:
-          lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
-      element1Scale: lerpDouble(a.element1Scale, b.element1Scale, t),
-      element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
-      element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
-      element2TranslateX:
-          lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
-      element2TranslateY:
-          lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
-      element2Scale: lerpDouble(a.element2Scale, b.element2Scale, t),
-    );
-  }
+  // static AvatarMarbleData? lerp(
+  //     AvatarMarbleData? a, AvatarMarbleData? b, double t) {
+  //   if (a == null || b == null) return a ?? b;
+  //   return AvatarMarbleData(
+  //     bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
+  //     element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
+  //     element1TranslateX:
+  //         lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
+  //     element1TranslateY:
+  //         lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
+  //     element1Scale: lerpDouble(a.element1Scale, b.element1Scale, t),
+  //     element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
+  //     element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
+  //     element2TranslateX:
+  //         lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
+  //     element2TranslateY:
+  //         lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
+  //     element2Scale: lerpDouble(a.element2Scale, b.element2Scale, t),
+  //   );
+  // }
 
-  AvatarMarbleData.generate(String name, [List<Color>? colors]) {
-    colors ??= defaultBoringAvatarsColors;
+  BoringAvatarMarbleData.generate(
+      {required String name,
+      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
     const double boxSize = 80;
     final numFromName = getHashCode(name);
-    final range = colors.length;
     int i = 0;
-    bgColor = getRandomColor(numFromName + i, colors, range);
+    bgColor = palette.getColor(numFromName + i);
 
     i = 1;
-    element1Color = getRandomColor(numFromName + i, colors, range);
+    element1Color = palette.getColor(numFromName + i);
     element1TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 10, 1);
     element1TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 10, 2);
     element1Scale = 1.2 + getUnit(numFromName * (i + 1), boxSize ~/ 20) / 10;
     element1Rotate = getUnit(numFromName * (i + 1), 360, 1);
 
     i = 2;
-    element2Color = getRandomColor(numFromName + i, colors, range);
+    element2Color = palette.getColor(numFromName + i);
     element2TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 10, 1);
     element2TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 10, 2);
     element2Scale = 1.2 + getUnit(numFromName * (i + 1), boxSize ~/ 20) / 10;
@@ -75,7 +77,7 @@ class AvatarMarbleData {
   operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    if (other is AvatarMarbleData) {
+    if (other is BoringAvatarMarbleData) {
       return bgColor == other.bgColor &&
           element1Color == other.element1Color &&
           element1TranslateX == other.element1TranslateX &&
@@ -103,20 +105,43 @@ class AvatarMarbleData {
         element2TranslateY,
         element2Scale,
       ]);
+
+  @override
+  BoringAvatarData lerp(BoringAvatarData end, double t) {
+    assert(end is BoringAvatarMarbleData);
+    final a = this;
+    final b = end as BoringAvatarMarbleData;
+    return BoringAvatarMarbleData(
+      bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
+      element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
+      element1TranslateX:
+          lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
+      element1TranslateY:
+          lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
+      element1Scale: lerpDouble(a.element1Scale, b.element1Scale, t),
+      element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
+      element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
+      element2TranslateX:
+          lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
+      element2TranslateY:
+          lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
+      element2Scale: lerpDouble(a.element2Scale, b.element2Scale, t),
+    );
+  }
+
+  @override
+  CustomPainter get painter => AvatarMarblePainter(this);
 }
 
 class AvatarMarblePainter extends AvatarCustomPainter {
-  final AvatarMarbleData properties;
+  final BoringAvatarMarbleData properties;
 
   static const int elements = 3;
 
   @override
   double get boxSize => 80;
 
-  AvatarMarblePainter(String name, [List<Color>? colors])
-      : properties = AvatarMarbleData.generate(name, colors);
-
-  AvatarMarblePainter.data(this.properties);
+  AvatarMarblePainter(this.properties);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -166,71 +191,5 @@ class AvatarMarblePainter extends AvatarCustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return oldDelegate is AvatarMarblePainter &&
         oldDelegate.properties != properties;
-  }
-}
-
-class AvatarMarbleDataTween extends Tween<AvatarMarbleData?> {
-  AvatarMarbleDataTween({AvatarMarbleData? begin, AvatarMarbleData? end})
-      : super(begin: begin, end: end);
-
-  @override
-  AvatarMarbleData? lerp(double t) => AvatarMarbleData.lerp(begin, end, t);
-}
-
-class AnimatedAvatarMarble extends ImplicitlyAnimatedWidget {
-  AnimatedAvatarMarble({
-    Key? key,
-    required this.name,
-    this.colors,
-    Curve curve = Curves.linear,
-    required Duration duration,
-    VoidCallback? onEnd,
-    this.size = Size.zero,
-  })  : data = AvatarMarbleData.generate(name, colors),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
-
-  final String name;
-  final List<Color>? colors;
-  final AvatarMarbleData data;
-  final Size size;
-
-  @override
-  AnimatedWidgetBaseState<AnimatedAvatarMarble> createState() =>
-      _AnimatedAvatarMarbleState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<String>('name', name));
-    properties.add(DiagnosticsProperty<List<Color>?>('name', colors));
-    properties.add(DiagnosticsProperty<AvatarMarbleData>('data', data));
-    properties.add(DiagnosticsProperty<Size>('size', size));
-  }
-}
-
-class _AnimatedAvatarMarbleState
-    extends AnimatedWidgetBaseState<AnimatedAvatarMarble> {
-  AvatarMarbleDataTween? _data;
-
-  @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data,
-            (dynamic value) => AvatarMarbleDataTween(begin: value))
-        as AvatarMarbleDataTween?;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: widget.size,
-      painter: AvatarMarblePainter.data(_data!.evaluate(animation)!),
-    );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarMarbleDataTween>('data', _data,
-        defaultValue: null));
   }
 }

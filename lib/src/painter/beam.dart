@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import './utilities.dart';
-import 'avatar_base.dart';
-import 'package:flutter/foundation.dart';
+import '../utilities.dart';
+import '../painter.dart';
+import '../palette.dart';
 
-class AvatarBeamData {
+class BoringAvatarBeamData extends BoringAvatarData {
   late Color wrapperColor;
   late Color faceColor;
   late Color backgroundColor;
@@ -20,7 +20,7 @@ class AvatarBeamData {
   late double faceTranslateX;
   late double faceTranslateY;
 
-  AvatarBeamData({
+  BoringAvatarBeamData({
     required this.wrapperColor,
     required this.faceColor,
     required this.backgroundColor,
@@ -42,7 +42,7 @@ class AvatarBeamData {
   operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    if (other is AvatarBeamData) {
+    if (other is BoringAvatarBeamData) {
       return wrapperColor == other.wrapperColor &&
           faceColor == other.faceColor &&
           backgroundColor == other.backgroundColor &&
@@ -81,12 +81,41 @@ class AvatarBeamData {
         faceTranslateY
       ]);
 
-  static AvatarBeamData? lerp(AvatarBeamData? a, AvatarBeamData? b, double t) {
-    assert(a != null);
-    assert(b != null);
-    a ??= AvatarBeamData.empty();
-    b ??= AvatarBeamData.empty();
-    return AvatarBeamData(
+  // static BoringAvatarBeamData? lerp2(
+  //     BoringAvatarBeamData? a, BoringAvatarBeamData? b, double t) {
+  //   assert(a != null);
+  //   assert(b != null);
+  //   a ??= BoringAvatarBeamData.empty();
+  //   b ??= BoringAvatarBeamData.empty();
+  //   return BoringAvatarBeamData(
+  //     wrapperColor: Color.lerp(a.wrapperColor, b.wrapperColor, t)!,
+  //     faceColor: Color.lerp(a.faceColor, b.faceColor, t)!,
+  //     backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t)!,
+  //     wrapperTranslateX:
+  //         lerpDouble(a.wrapperTranslateX, b.wrapperTranslateX, t),
+  //     wrapperTranslateY:
+  //         lerpDouble(a.wrapperTranslateY, b.wrapperTranslateY, t),
+  //     wrapperRotate: lerpRotate(a.wrapperRotate, b.wrapperRotate, t),
+  //     wrapperRadius: lerpDouble(a.wrapperRadius, b.wrapperRadius, t),
+  //     wrapperScale: lerpDouble(a.wrapperScale, b.wrapperScale, t),
+  //     isMouthOpen: t >= 0.5 ? b.isMouthOpen : a.isMouthOpen,
+  //     isCircle: t >= 0.5 ? b.isCircle : a.isCircle,
+  //     // isMouthOpen: b.isMouthOpen,
+  //     // isCircle: b.isCircle,
+  //     eyeSpread: lerpDouble(a.eyeSpread, b.eyeSpread, t),
+  //     mouthSpread: lerpDouble(a.mouthSpread, b.mouthSpread, t),
+  //     faceRotate: lerpRotate(a.faceRotate, b.faceRotate, t),
+  //     faceTranslateX: lerpDouble(a.faceTranslateX, b.faceTranslateX, t),
+  //     faceTranslateY: lerpDouble(a.faceTranslateY, b.faceTranslateY, t),
+  //   );
+  // }
+
+  @override
+  BoringAvatarData lerp(BoringAvatarData end, double t) {
+    assert(end is BoringAvatarBeamData);
+    final a = this;
+    final b = end as BoringAvatarBeamData;
+    return BoringAvatarBeamData(
       wrapperColor: Color.lerp(a.wrapperColor, b.wrapperColor, t)!,
       faceColor: Color.lerp(a.faceColor, b.faceColor, t)!,
       backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t)!,
@@ -99,8 +128,6 @@ class AvatarBeamData {
       wrapperScale: lerpDouble(a.wrapperScale, b.wrapperScale, t),
       isMouthOpen: t >= 0.5 ? b.isMouthOpen : a.isMouthOpen,
       isCircle: t >= 0.5 ? b.isCircle : a.isCircle,
-      // isMouthOpen: b.isMouthOpen,
-      // isCircle: b.isCircle,
       eyeSpread: lerpDouble(a.eyeSpread, b.eyeSpread, t),
       mouthSpread: lerpDouble(a.mouthSpread, b.mouthSpread, t),
       faceRotate: lerpRotate(a.faceRotate, b.faceRotate, t),
@@ -109,7 +136,7 @@ class AvatarBeamData {
     );
   }
 
-  AvatarBeamData.empty() {
+  BoringAvatarBeamData.empty() {
     wrapperColor = const Color.fromRGBO(255, 255, 255, 0);
     faceColor = const Color.fromRGBO(255, 255, 255, 0);
     backgroundColor = const Color.fromRGBO(255, 255, 255, 0);
@@ -127,12 +154,13 @@ class AvatarBeamData {
     faceTranslateY = 0;
   }
 
-  AvatarBeamData.generate(String name, [List<Color>? colors]) {
-    colors ??= defaultBoringAvatarsColors;
+  BoringAvatarBeamData.generate(
+      {required String name,
+      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
     const double boxSize = 36;
     final numFromName = getHashCode(name);
-    final range = colors.length;
-    wrapperColor = getRandomColor<Color>(numFromName, colors, range);
+    wrapperColor = palette.getColor(numFromName);
     final preTranslateX = getUnit(numFromName, 10, 1).toDouble();
     wrapperTranslateX =
         preTranslateX < 5 ? preTranslateX + boxSize / 9 : preTranslateX;
@@ -141,7 +169,7 @@ class AvatarBeamData {
         preTranslateY < 5 ? preTranslateY + boxSize / 9 : preTranslateY;
     isCircle = getBoolean(numFromName, 1);
     faceColor = getContrast(wrapperColor);
-    backgroundColor = getRandomColor(numFromName + 13, colors, range);
+    backgroundColor = palette.getColor(numFromName + 13);
     wrapperRotate = getUnit(numFromName, 360).toDouble();
     wrapperScale = 1 + getUnit(numFromName, boxSize ~/ 12) / 10;
     isMouthOpen = getBoolean(numFromName, 2);
@@ -156,23 +184,23 @@ class AvatarBeamData {
         ? wrapperTranslateY / 2
         : getUnit(numFromName, 7, 2).toDouble();
   }
+
+  @override
+  CustomPainter get painter => AvatarBeamPainter(this);
 }
 
 class AvatarBeamPainter extends AvatarCustomPainter {
-  final AvatarBeamData properties;
+  final BoringAvatarBeamData properties;
 
   @override
   double get boxSize => 36;
 
-  AvatarBeamPainter(String name, [List<Color>? colors])
-      : properties = AvatarBeamData.generate(name, colors);
-
-  AvatarBeamPainter.data(this.properties);
+  AvatarBeamPainter(this.properties);
 
   @override
   void paint(Canvas canvas, Size size) {
     this.size = size;
-
+    canvas.save();
     final p = properties;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
 
@@ -214,77 +242,12 @@ class AvatarBeamPainter extends AvatarCustomPainter {
     canvas.drawRRect(
         RRect.fromRectXY(rEyeRect, cX(1), cX(1)), fillPaint(p.faceColor));
     canvas.transform(Matrix4.identity().storage);
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return oldDelegate is AvatarBeamPainter &&
         oldDelegate.properties != properties;
-  }
-}
-
-class AvatarBeamDataTween extends Tween<AvatarBeamData?> {
-  AvatarBeamDataTween({AvatarBeamData? begin, AvatarBeamData? end})
-      : super(begin: begin, end: end);
-
-  @override
-  AvatarBeamData? lerp(double t) => AvatarBeamData.lerp(begin, end, t);
-}
-
-class AnimatedAvatarBeam extends ImplicitlyAnimatedWidget {
-  AnimatedAvatarBeam({
-    Key? key,
-    required this.name,
-    this.colors,
-    Curve curve = Curves.linear,
-    required Duration duration,
-    VoidCallback? onEnd,
-    this.size = Size.zero,
-  })  : data = AvatarBeamData.generate(name, colors),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
-
-  final String name;
-  final List<Color>? colors;
-  final AvatarBeamData data;
-  final Size size;
-
-  @override
-  AnimatedWidgetBaseState<AnimatedAvatarBeam> createState() =>
-      _AnimatedAvatarBeamState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<String>('name', name));
-    properties.add(DiagnosticsProperty<List<Color>?>('colors', colors));
-    properties.add(DiagnosticsProperty<AvatarBeamData>('data', data));
-    properties.add(DiagnosticsProperty<Size>('size', size));
-  }
-}
-
-class _AnimatedAvatarBeamState
-    extends AnimatedWidgetBaseState<AnimatedAvatarBeam> {
-  AvatarBeamDataTween? _data;
-
-  @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-    _data = visitor(_data, widget.data,
-            (dynamic value) => AvatarBeamDataTween(begin: value))
-        as AvatarBeamDataTween?;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: widget.size,
-      painter: AvatarBeamPainter.data(_data!.evaluate(animation)!),
-    );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AvatarBeamDataTween>('data', _data,
-        defaultValue: null));
   }
 }

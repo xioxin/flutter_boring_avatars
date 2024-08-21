@@ -126,6 +126,7 @@ class AvatarPixelPainter extends AvatarCustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.save();
     this.size = size;
     int i = 0;
     final itemWidth = size.width / 8;
@@ -135,9 +136,12 @@ class AvatarPixelPainter extends AvatarCustomPainter {
       final x = pos[0];
       final y = pos[1];
       canvas.drawRect(
-          Rect.fromLTWH(itemWidth * x, itemHeight * y, itemWidth, itemHeight),
-          fillPaint(color));
+        Rect.fromLTWH(itemWidth * x, itemHeight * y, itemWidth, itemHeight),
+        fillPaint(color)
+          ..isAntiAlias = false, // prevent gaps between rectangles
+      );
     }
+    canvas.restore();
   }
 
   @override

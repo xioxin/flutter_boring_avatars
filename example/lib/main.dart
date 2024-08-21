@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
@@ -37,18 +38,33 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   late List<Color> colors;
 
-  Widget controlBar() {
+  Widget controlBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
+      child: Wrap(
+        spacing: 16,
+        runSpacing: 16,
+        alignment: WrapAlignment.center,
         children: [
-          SegmentedButton<BoringAvatarType>(
-            showSelectedIcon: false,
-            segments: BoringAvatarType.values
-                .map(
-                  (type) => ButtonSegment(
-                    value: type,
-                    tooltip: type.name,
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              // buttons
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: BoringAvatarType.values.map((type) {
+                  final isSelected = this.type == type;
+                  final colorScheme = Theme.of(context).colorScheme;
+                  var backgroundColor = colorScheme.surfaceContainerLow;
+                  var foregroundColor = colorScheme.onSurface;
+                  if (isSelected) {
+                    backgroundColor = colorScheme.secondaryContainer;
+                    foregroundColor = colorScheme.primary;
+                  }
+                  return FilledButton.icon(
                     icon: SizedBox(
                       width: 24,
                       child: BoringAvatar(
@@ -57,30 +73,71 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                         shape: const OvalBorder(),
                       ),
                     ),
-                    label: Text(type.name, maxLines: 1),
-                  ),
-                )
-                .toList(),
-            style: SegmentedButton.styleFrom(padding: const EdgeInsets.all(2)),
-            selected: {type},
-            onSelectionChanged: (v) {
-              setState(() {
-                type = v.first;
-              });
-            },
+                    style: FilledButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: backgroundColor,
+                        foregroundColor: foregroundColor,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 12)),
+                    onPressed: () {
+                      setState(() {
+                        this.type = type;
+                      });
+                    },
+                    label: Text(type.name),
+                  );
+                }).toList(),
+              ),
+
+              // child: SegmentedButton<BoringAvatarType>(
+              //   showSelectedIcon: false,
+              //   segments: BoringAvatarType.values
+              //       .map(
+              //         (type) => ButtonSegment(
+              //           value: type,
+              //           tooltip: type.name,
+              //           icon: SizedBox(
+              //             width: 24,
+              //             child: BoringAvatar(
+              //               name: type.name,
+              //               type: type,
+              //               shape: const OvalBorder(),
+              //             ),
+              //           ),
+              //           label: Text(type.name, maxLines: 1),
+              //         ),
+              //       )
+              //       .toList(),
+              //   style:
+              //       SegmentedButton.styleFrom(
+              //           padding: const EdgeInsets.all(2)
+              //
+              //       ),
+              //   selected: {type},
+              //   onSelectionChanged: (v) {
+              //     setState(() {
+              //       type = v.first;
+              //     });
+              //   },
+              // ),
+            ),
           ),
-          const SizedBox(width: 8),
           Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            elevation: 1,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ...[0, 1, 2, 3, 4].expand((key) => [
                         colorButton(key),
                         const SizedBox(width: 8),
                       ]),
-                  FilledButton(
-                    child: const Text("Random"),
+                  FilledButton.tonal(
+                    child: Icon(Icons.shuffle),
                     onPressed: () {
                       setState(() {
                         colors = getRandomColors();
@@ -88,8 +145,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     },
                   ),
                   const SizedBox(width: 8),
-                  FilledButton(
-                    child: const Text("Copy"),
+                  FilledButton.tonal(
+                    child: Icon(Icons.copy),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(
                           text:
@@ -100,14 +157,22 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          FilledButton(
-            child: const Text("Random Names"),
-            onPressed: () {
-              setState(() {
-                names = List.generate(200, (index) => randomNames.fullName());
-              });
-            },
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FilledButton(
+                child: const Text("Random Names"),
+                onPressed: () {
+                  setState(() {
+                    names =
+                        List.generate(200, (index) => randomNames.fullName());
+                  });
+                },
+              ),
+            ),
           )
         ],
       ),
@@ -211,33 +276,30 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.fromSeed(seedColor: colors.first);
     return MaterialApp(
+      theme: ThemeData.from(colorScheme: colorScheme),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Boring Avatars'),
         ),
         body: Column(
           children: [
-            controlBar(),
+            Builder(builder: (context) {
+              return controlBar(context);
+            }),
             Expanded(
-              child: Center(
-                child: Center(
-                  child: Center(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(32),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 150,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: names.length,
-                      itemBuilder: (context, index) {
-                        return avatar(index);
-                      },
-                    ),
-                  ),
+              child: GridView.builder(
+                padding: const EdgeInsets.all(32),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 150,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
                 ),
+                itemCount: names.length,
+                itemBuilder: (context, index) {
+                  return avatar(index);
+                },
               ),
             )
           ],

@@ -64,7 +64,7 @@ class BoringAvatar extends StatelessWidget {
         child: avatar,
       );
     }
-    return avatar;
+    return RepaintBoundary(child: avatar);
   }
 
   @override

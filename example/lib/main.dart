@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:random_name_generator/random_name_generator.dart';
 
 import 'colors.dart';
@@ -88,38 +87,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                   );
                 }).toList(),
               ),
-
-              // child: SegmentedButton<BoringAvatarType>(
-              //   showSelectedIcon: false,
-              //   segments: BoringAvatarType.values
-              //       .map(
-              //         (type) => ButtonSegment(
-              //           value: type,
-              //           tooltip: type.name,
-              //           icon: SizedBox(
-              //             width: 24,
-              //             child: BoringAvatar(
-              //               name: type.name,
-              //               type: type,
-              //               shape: const OvalBorder(),
-              //             ),
-              //           ),
-              //           label: Text(type.name, maxLines: 1),
-              //         ),
-              //       )
-              //       .toList(),
-              //   style:
-              //       SegmentedButton.styleFrom(
-              //           padding: const EdgeInsets.all(2)
-              //
-              //       ),
-              //   selected: {type},
-              //   onSelectionChanged: (v) {
-              //     setState(() {
-              //       type = v.first;
-              //     });
-              //   },
-              // ),
             ),
           ),
           Card(
@@ -140,7 +107,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     child: Icon(Icons.shuffle),
                     onPressed: () {
                       setState(() {
-                        colors = getRandomColors();
+                        colors = getRandomColors().toList();
                       });
                     },
                   ),
@@ -200,25 +167,46 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     showDialog(
       builder: (context) {
         return AlertDialog(
-          title: const Text('Pick a color!'),
           content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: colors[index],
-              onColorChanged: (color) {
-                setState(() {
-                  colors[index] = color;
-                });
-              },
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 400,
+              ),
+              child: ColorPicker(
+                color: colors[index],
+                colorCodeHasColor: true,
+                colorCodeReadOnly: false,
+                showColorCode: true,
+                onColorChanged: (Color color) =>
+                    setState(() => colors[index] = color),
+                pickersEnabled: const <ColorPickerType, bool>{
+                  ColorPickerType.wheel: true,
+                  ColorPickerType.both: true,
+                  ColorPickerType.primary: false,
+                  ColorPickerType.accent: false,
+                  ColorPickerType.bw: false,
+                  // ColorPickerType.custom: true,
+                },
+                opacityTrackWidth: 200,
+                opacityTrackHeight: 24,
+                width: 44,
+                height: 44,
+                borderRadius: 22,
+                heading: Text(
+                  'Select color',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                subheading: Text(
+                  'Select color shade',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                opacitySubheading: Text(
+                  'Select opacity level',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
             ),
           ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: const Text('Got it'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
         );
       },
       context: context,

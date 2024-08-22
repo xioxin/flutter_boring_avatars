@@ -5,9 +5,12 @@ import 'package:flutter_boring_avatars/src/palette.dart';
 import 'painter.dart';
 import 'inherited.dart';
 
+/// A widget that draws a boring avatar on a canvas.
 class BoringAvatarCanvas extends StatelessWidget {
+  /// The data used to draw the avatar.
   final BoringAvatarData avatarData;
 
+  /// Creates a [BoringAvatarCanvas] widget.
   const BoringAvatarCanvas({super.key, required this.avatarData});
 
   @override
@@ -26,14 +29,24 @@ class BoringAvatarCanvas extends StatelessWidget {
   }
 }
 
-@immutable
+/// A widget that displays a boring avatar.
 class BoringAvatar extends StatelessWidget {
+  /// The name used to generate the avatar.
   final String name;
+
+  /// The type of the avatar.
   final BoringAvatarType? type;
+
+  /// The color palette used for the avatar.
   final BoringAvatarPalette? palette;
+
+  /// The shape of the avatar.
   final ShapeBorder? shape;
+
+  /// The clip behavior of the avatar.
   final Clip clipBehavior;
 
+  /// Creates a [BoringAvatar] widget.
   const BoringAvatar({
     super.key,
     required this.name,
@@ -79,13 +92,18 @@ class BoringAvatar extends StatelessWidget {
   }
 }
 
+/// A widget that animates a boring avatar canvas.
 class AnimatedBoringCanvas extends ImplicitlyAnimatedWidget {
+  /// The data used to draw the avatar.
   final BoringAvatarData avatarData;
+  final Widget? child;
 
+  /// Creates an [AnimatedBoringCanvas] widget.
   const AnimatedBoringCanvas({
     super.key,
     required this.avatarData,
     required super.duration,
+    this.child,
     super.curve,
     super.onEnd,
   });
@@ -124,6 +142,7 @@ class _AnimatedBoringCanvasState
       child: CustomPaint(
         size: Size.infinite,
         painter: avatarData.painter,
+        child: widget.child,
       ),
     );
   }
@@ -136,22 +155,40 @@ class _AnimatedBoringCanvasState
   }
 }
 
+/// A widget that displays an animated boring avatar.
 class AnimatedBoringAvatar extends StatelessWidget {
+  /// The name used to generate the avatar.
   final String name;
+
+  /// The type of the avatar.
   final BoringAvatarType? type;
+
+  /// The color palette used for the avatar.
   final BoringAvatarPalette? palette;
 
+  /// The duration of the animation.
   final Duration duration;
+
+  /// The callback to be called when the animation ends.
   final VoidCallback? onEnd;
+
+  /// The curve of the animation.
   final Curve curve;
 
+  /// The shape of the avatar.
   final ShapeBorder? shape;
+
+  /// The clip behavior of the avatar.
   final Clip clipBehavior;
 
+  final Widget? child;
+
+  /// Creates an [AnimatedBoringAvatar] widget.
   const AnimatedBoringAvatar({
     super.key,
     required this.name,
     required this.duration,
+    this.child,
     this.curve = Curves.linear,
     this.onEnd,
     this.type,
@@ -177,6 +214,7 @@ class AnimatedBoringAvatar extends StatelessWidget {
         onEnd: onEnd,
         curve: curve,
         duration: duration,
+        child: child,
       ),
     );
     if (shape != null) {
@@ -204,9 +242,12 @@ class AnimatedBoringAvatar extends StatelessWidget {
   }
 }
 
+/// A decoration that draws a boring avatar.
 class BoringAvatarDecoration extends Decoration {
+  /// The data used to draw the avatar.
   final BoringAvatarData avatarData;
 
+  /// Creates a [BoringAvatarDecoration] widget.
   const BoringAvatarDecoration({
     required this.avatarData,
   });
@@ -261,6 +302,8 @@ class _BoringAvatarDecorationPainter extends BoxPainter {
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    canvas.translate(offset.dx, offset.dy);
     painter.paint(canvas, (configuration.size ?? Size.zero));
+    canvas.translate(-offset.dx, -offset.dy);
   }
 }

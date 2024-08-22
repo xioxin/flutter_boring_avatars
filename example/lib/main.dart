@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_boring_avatars_example/control_bar.dart';
 import 'package:random_name_generator/random_name_generator.dart';
+import 'package:super_clipboard/super_clipboard.dart';
 
 import 'colors.dart';
 
@@ -26,205 +30,203 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   RandomNames randomNames = RandomNames(Zone.us);
 
+  late BoringAvatarPalette colorPalette;
   late List<String> names;
 
   @override
   void initState() {
-    colors = getRandomColors().toList();
+    colorPalette = BoringAvatarPalette(getRandomColors());
     names = List.generate(200, (index) => randomNames.fullName());
     super.initState();
   }
 
-  late List<Color> colors;
-
-  Widget controlBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Wrap(
-        spacing: 16,
-        runSpacing: 16,
-        alignment: WrapAlignment.center,
-        children: [
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              // buttons
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: BoringAvatarType.values.map((type) {
-                  final isSelected = this.type == type;
-                  final colorScheme = Theme.of(context).colorScheme;
-                  var backgroundColor = colorScheme.surfaceContainerLow;
-                  var foregroundColor = colorScheme.onSurface;
-                  if (isSelected) {
-                    backgroundColor = colorScheme.secondaryContainer;
-                    foregroundColor = colorScheme.primary;
-                  }
-                  return FilledButton.icon(
-                    icon: SizedBox(
-                      width: 24,
-                      child: BoringAvatar(
-                        name: type.name,
-                        type: type,
-                        shape: const OvalBorder(),
-                      ),
-                    ),
-                    style: FilledButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: backgroundColor,
-                        foregroundColor: foregroundColor,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 12)),
-                    onPressed: () {
-                      setState(() {
-                        this.type = type;
-                      });
-                    },
-                    label: Text(type.name),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            elevation: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...[0, 1, 2, 3, 4].expand((key) => [
-                        colorButton(key),
-                        const SizedBox(width: 8),
-                      ]),
-                  FilledButton.tonal(
-                    child: Icon(Icons.shuffle),
-                    onPressed: () {
-                      setState(() {
-                        colors = getRandomColors().toList();
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton.tonal(
-                    child: Icon(Icons.copy),
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(
-                          text:
-                              "const BoringAvatarPalette([${colors.map((e) => "Color(0x${e.value.toRadixString(16)})").join(", ")}])"));
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FilledButton(
-                child: const Text("Random Names"),
-                onPressed: () {
-                  setState(() {
-                    names =
-                        List.generate(200, (index) => randomNames.fullName());
-                  });
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  colorButton(int index) {
-    return FilledButton(
-      onPressed: () {
-        selectColor(index);
-      },
-      child: const SizedBox(
-        width: 32,
-        height: 32,
-      ),
-      style: FilledButton.styleFrom(
-        backgroundColor: colors[index],
-        padding: const EdgeInsets.all(0),
-        minimumSize: Size.zero,
-      ),
-    );
-  }
-
-  selectColor(int index) {
-    showDialog(
-      builder: (context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 400,
-              ),
-              child: ColorPicker(
-                color: colors[index],
-                colorCodeHasColor: true,
-                colorCodeReadOnly: false,
-                showColorCode: true,
-                onColorChanged: (Color color) =>
-                    setState(() => colors[index] = color),
-                pickersEnabled: const <ColorPickerType, bool>{
-                  ColorPickerType.wheel: true,
-                  ColorPickerType.both: true,
-                  ColorPickerType.primary: false,
-                  ColorPickerType.accent: false,
-                  ColorPickerType.bw: false,
-                  // ColorPickerType.custom: true,
-                },
-                opacityTrackWidth: 200,
-                opacityTrackHeight: 24,
-                width: 44,
-                height: 44,
-                borderRadius: 22,
-                heading: Text(
-                  'Select color',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                subheading: Text(
-                  'Select color shade',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                opacitySubheading: Text(
-                  'Select opacity level',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      context: context,
-    );
-  }
-
-  avatar(int index) {
+  avatarItem(int index) {
     final name = names[index];
+
+    return AvatarInputWidget(
+        name: name,
+        colorPalette: colorPalette,
+        type: type,
+        onNameChanged: (name) {
+          setState(() {
+            names[index] = name;
+          });
+        });
+
+    // return Column(
+    //   children: [
+    //     Expanded(
+    //       child: AnimatedBoringAvatar(
+    //         duration: const Duration(milliseconds: 1000),
+    //         curve: Curves.easeInOutCubicEmphasized,
+    //         name: name,
+    //         palette: colorPalette,
+    //         type: type,
+    //         shape: const OvalBorder(),
+    //       ),
+    //     ),
+    //     const SizedBox(height: 8),
+    //     SizedBox(
+    //       height: 24,
+    //       child: TextField(
+    //         key: ValueKey('input:$index'),
+    //         decoration: InputDecoration(
+    //           contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+    //           focusedBorder: const OutlineInputBorder(
+    //             borderSide: BorderSide(color: Colors.black, width: 1),
+    //             borderRadius: BorderRadius.all(Radius.circular(32)),
+    //           ),
+    //           enabledBorder: OutlineInputBorder(
+    //             borderSide:
+    //                 BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
+    //             borderRadius: const BorderRadius.all(Radius.circular(32)),
+    //           ),
+    //         ),
+    //         // controller: TextEditingController.fromValue(
+    //         //   TextEditingValue(text: name),
+    //         // ),
+    //         style: TextStyle(
+    //           fontSize: 12,
+    //         ),
+    //         textAlign: TextAlign.center,
+    //         onChanged: (v) {
+    //           setState(() {
+    //             names[index] = v;
+    //           });
+    //         },
+    //       ),
+    //     ),
+    //     const SizedBox(height: 8),
+    //   ],
+    // );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme =
+        ColorScheme.fromSeed(seedColor: colorPalette.getColor(2));
+    return MaterialApp(
+      theme: ThemeData.from(colorScheme: colorScheme),
+      home: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Boring Avatars'),
+          actions: [
+            IconButton(
+              tooltip: 'Randomize',
+              onPressed: () {
+                setState(() {
+                  names =
+                      List.generate(2000, (index) => randomNames.fullName());
+                  colorPalette = BoringAvatarPalette(getRandomColors());
+                });
+              },
+              icon: const Icon(Icons.refresh),
+            ),
+          ],
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: GridView.builder(
+                padding: const EdgeInsets.only(
+                    left: 32, top: 180, right: 32, bottom: 32),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 150,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: names.length,
+                itemBuilder: (context, index) {
+                  return avatarItem(index);
+                },
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: ControlBarWidget(
+                  type: type,
+                  palette: colorPalette,
+                  onTypeChanged: (v) {
+                    setState(() {
+                      type = v;
+                    });
+                  },
+                  onPaletteChanged: (v) {
+                    setState(() {
+                      colorPalette = v;
+                    });
+                  }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AvatarInputWidget extends StatefulWidget {
+  const AvatarInputWidget({
+    Key? key,
+    required this.name,
+    required this.colorPalette,
+    required this.type,
+    required this.onNameChanged,
+  }) : super(key: key);
+
+  final String name;
+  final BoringAvatarPalette colorPalette;
+  final BoringAvatarType type;
+  final ValueChanged<String> onNameChanged;
+
+  @override
+  State<AvatarInputWidget> createState() => _AvatarInputWidgetState();
+}
+
+class _AvatarInputWidgetState extends State<AvatarInputWidget> {
+  late final TextEditingController textController = TextEditingController(
+    text: widget.name,
+  );
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
           child: AnimatedBoringAvatar(
             duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOutCubicEmphasized,
-            name: name,
-            palette: BoringAvatarPalette(colors),
-            type: type,
+            name: widget.name,
+            palette: widget.colorPalette,
+            type: widget.type,
             shape: const OvalBorder(),
+            child: RawMaterialButton(
+              onPressed: () async {
+                final image = await createBoringAvatarToImage(
+                  name: widget.name,
+                  size: const Size(256, 256),
+                  type: widget.type,
+                  palette: widget.colorPalette,
+                );
+                final pngData =
+                    await image.toByteData(format: ImageByteFormat.png);
+                final clipboard = SystemClipboard.instance;
+                if (clipboard == null) {
+                  return; // Clipboard API is not supported on this platform.
+                }
+                final item = DataWriterItem();
+                item.add(Formats.png(pngData!.buffer.asUint8List()));
+                await clipboard.write([item]);
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Avatar image copied to clipboard'),
+                  ),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -243,56 +245,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 borderRadius: const BorderRadius.all(Radius.circular(32)),
               ),
             ),
-            controller: TextEditingController.fromValue(
-              TextEditingValue(text: name),
-            ),
-            style: TextStyle(
-              fontSize: 12,
-            ),
+            controller: textController,
+            style: const TextStyle(fontSize: 12),
             textAlign: TextAlign.center,
-            onChanged: (v) {
-              setState(() {
-                names[index] = v;
-              });
-            },
+            onChanged: widget.onNameChanged,
           ),
         ),
         const SizedBox(height: 8),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: colors.first);
-    return MaterialApp(
-      theme: ThemeData.from(colorScheme: colorScheme),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Boring Avatars'),
-        ),
-        body: Column(
-          children: [
-            Builder(builder: (context) {
-              return controlBar(context);
-            }),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(32),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: names.length,
-                itemBuilder: (context, index) {
-                  return avatar(index);
-                },
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

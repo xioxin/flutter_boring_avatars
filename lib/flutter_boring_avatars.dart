@@ -3,7 +3,8 @@ library flutter_boring_avatars;
 export './src/widget.dart';
 export './src/inherited.dart';
 export './src/palette.dart';
-export './src/utilities.dart' show boringAvatarHashCode, boringAvatarHashCodeOld;
+export './src/utilities.dart'
+    show boringAvatarHashCode, boringAvatarHashCodeOld;
 
 export './src/painter.dart';
 
@@ -14,4 +15,4 @@ export './src/painter/pixel.dart';
 export './src/painter/ring.dart';
 export './src/painter/sunset.dart';
 
-
+export './src/tools.dart';

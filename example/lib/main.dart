@@ -33,6 +33,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   late BoringAvatarPalette colorPalette;
   late List<String> names;
 
+  ShapeBorder shape = const OvalBorder();
+
   @override
   void initState() {
     colorPalette = BoringAvatarPalette(getRandomColors());
@@ -45,8 +47,10 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
     return AvatarInputWidget(
         name: name,
+        resetInput: names.hashCode,
         colorPalette: colorPalette,
         type: type,
+        shape: shape,
         onNameChanged: (name) {
           setState(() {
             names[index] = name;
@@ -113,7 +117,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           title: const Text('Boring Avatars'),
           actions: [
             IconButton(
-              tooltip: 'Randomize',
+              tooltip: 'Randomize All',
               onPressed: () {
                 setState(() {
                   names =
@@ -130,7 +134,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             Positioned.fill(
               child: GridView.builder(
                 padding: const EdgeInsets.only(
-                    left: 32, top: 180, right: 32, bottom: 32),
+                    left: 32, top: 220, right: 32, bottom: 32),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 150,
                   crossAxisSpacing: 16,
@@ -144,21 +148,34 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             ),
             Positioned(
               top: 0,
-              left: 0,
-              right: 0,
+              left: 16,
+              right: 16,
               child: ControlBarWidget(
-                  type: type,
-                  palette: colorPalette,
-                  onTypeChanged: (v) {
-                    setState(() {
-                      type = v;
-                    });
-                  },
-                  onPaletteChanged: (v) {
-                    setState(() {
-                      colorPalette = v;
-                    });
-                  }),
+                type: type,
+                palette: colorPalette,
+                shape: shape,
+                onShapeChanged: (v) {
+                  setState(() {
+                    shape = v;
+                  });
+                },
+                onTypeChanged: (v) {
+                  setState(() {
+                    type = v;
+                  });
+                },
+                onPaletteChanged: (v) {
+                  setState(() {
+                    colorPalette = v;
+                  });
+                },
+                onRandomizeNames: () {
+                  setState(() {
+                    names =
+                        List.generate(2000, (index) => randomNames.fullName());
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -174,24 +191,36 @@ class AvatarInputWidget extends StatefulWidget {
     required this.colorPalette,
     required this.type,
     required this.onNameChanged,
+    required this.resetInput,
+    required this.shape,
   }) : super(key: key);
 
   final String name;
   final BoringAvatarPalette colorPalette;
   final BoringAvatarType type;
   final ValueChanged<String> onNameChanged;
+  final int resetInput;
+  final ShapeBorder shape;
 
   @override
   State<AvatarInputWidget> createState() => _AvatarInputWidgetState();
 }
 
 class _AvatarInputWidgetState extends State<AvatarInputWidget> {
-  late final TextEditingController textController = TextEditingController(
+  late TextEditingController textController = TextEditingController(
     text: widget.name,
   );
 
+  late int inputKey = widget.resetInput;
+
   @override
   Widget build(BuildContext context) {
+    if (widget.resetInput != inputKey) {
+      textController = TextEditingController(
+        text: widget.name,
+      );
+      inputKey = widget.resetInput;
+    }
     return Column(
       children: [
         Expanded(
@@ -201,7 +230,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
             name: widget.name,
             palette: widget.colorPalette,
             type: widget.type,
-            shape: const OvalBorder(),
+            shape: widget.shape,
             child: RawMaterialButton(
               onPressed: () async {
                 final image = await createBoringAvatarToImage(

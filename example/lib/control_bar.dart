@@ -10,13 +10,20 @@ class ControlBarWidget extends StatelessWidget {
   final ValueChanged<BoringAvatarType>? onTypeChanged;
   final BoringAvatarPalette palette;
   final ValueChanged<BoringAvatarPalette>? onPaletteChanged;
+  final VoidCallback? onRandomizeNames;
 
-  const ControlBarWidget({
+  final ShapeBorder shape;
+  final ValueChanged<ShapeBorder>? onShapeChanged;
+
+  ControlBarWidget({
     super.key,
     required this.type,
     required this.palette,
+    required this.shape,
     this.onTypeChanged,
     this.onPaletteChanged,
+    this.onRandomizeNames,
+    this.onShapeChanged,
   });
 
   colorButton(BuildContext context, int index) {
@@ -25,8 +32,8 @@ class ControlBarWidget extends StatelessWidget {
         selectColor(context, index);
       },
       child: const SizedBox(
-        width: 32,
-        height: 32,
+        width: 30,
+        height: 30,
       ),
       style: FilledButton.styleFrom(
         backgroundColor: palette.getColor(index),
@@ -90,6 +97,35 @@ class ControlBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<ShapeBorder, Widget> shapes = {
+      const OvalBorder(): Icon(Icons.circle_outlined),
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ): Icon(Icons.rounded_corner),
+      const Border(): Icon(Icons.square_outlined),
+      BeveledRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ): Padding(
+        padding: const EdgeInsets.all(2),
+        child: Material(
+          shape: BeveledRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: BorderSide(width: 1),
+          ),
+          color: Colors.transparent,
+          child: SizedBox(
+            width: 15,
+            height: 15,
+          ),
+        ),
+      ),
+    };
+
+    const spacing = 8.0;
+    const padding = 8.0;
+    final cardShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(24),
+    );
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -102,20 +138,26 @@ class ControlBarWidget extends StatelessWidget {
             ]),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(
+          top: 8,
+          bottom: 16,
+          left: 8,
+          right: 8,
+        ),
         child: Wrap(
-          spacing: 16,
-          runSpacing: 16,
+          spacing: spacing,
+          runSpacing: spacing,
           alignment: WrapAlignment.center,
           children: [
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+              margin: EdgeInsets.zero,
+              shape: cardShape,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(padding),
                 // buttons
                 child: Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
                   children: BoringAvatarType.values.map((type) {
                     final isSelected = this.type == type;
                     final colorScheme = Theme.of(context).colorScheme;
@@ -128,6 +170,7 @@ class ControlBarWidget extends StatelessWidget {
                     return FilledButton.icon(
                       icon: SizedBox(
                         width: 24,
+                        height: 24,
                         child: BoringAvatar(
                           name: type.name,
                           type: type,
@@ -135,11 +178,14 @@ class ControlBarWidget extends StatelessWidget {
                         ),
                       ),
                       style: FilledButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: backgroundColor,
-                          foregroundColor: foregroundColor,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 12)),
+                        elevation: 0,
+                        backgroundColor: backgroundColor,
+                        foregroundColor: foregroundColor,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 4,
+                        ),
+                      ),
                       onPressed: () {
                         onTypeChanged?.call(type);
                       },
@@ -150,15 +196,14 @@ class ControlBarWidget extends StatelessWidget {
               ),
             ),
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+              margin: EdgeInsets.zero,
+              shape: cardShape,
               elevation: 1,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(padding),
                 child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: spacing,
+                  runSpacing: spacing,
                   children: [
                     ...[0, 1, 2, 3, 4].expand((key) => [
                           colorButton(context, key),
@@ -183,7 +228,7 @@ class ControlBarWidget extends StatelessWidget {
                                   "const BoringAvatarPalette([${palette.colors.map((e) => "Color(0x${e.value.toRadixString(16)})").join(", ")}])"));
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text('Palette code copied to clipboard'),
                             ),
                           );
@@ -191,6 +236,59 @@ class ControlBarWidget extends StatelessWidget {
                       ),
                     )
                   ],
+                ),
+              ),
+            ),
+            Card(
+              margin: EdgeInsets.zero,
+              shape: cardShape,
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                // buttons
+                child: Wrap(
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: shapes.entries.map((entry) {
+                    final value = entry.key;
+                    final icon = entry.value;
+                    final isSelected = shape == value;
+                    final colorScheme = Theme.of(context).colorScheme;
+                    var backgroundColor = colorScheme.surfaceContainerLow;
+                    var foregroundColor = colorScheme.onSurface;
+                    if (isSelected) {
+                      backgroundColor = colorScheme.secondaryContainer;
+                      foregroundColor = colorScheme.primary;
+                    }
+                    return IconButton(
+                        onPressed: () {
+                          onShapeChanged?.call(value);
+                        },
+                        icon: icon,
+                        style: IconButton.styleFrom(
+                          iconSize: 20,
+                          padding: EdgeInsets.all(6),
+                          minimumSize: Size.zero,
+                          backgroundColor: backgroundColor,
+                          foregroundColor: foregroundColor,
+                        ));
+                  }).toList(),
+                ),
+              ),
+            ),
+            Card(
+              margin: EdgeInsets.zero,
+              shape: cardShape,
+              elevation: 1,
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                child: Tooltip(
+                  message: 'Randomize names',
+                  child: FilledButton.tonal(
+                    child: const Text("Randomize names"),
+                    onPressed: () {
+                      onRandomizeNames?.call();
+                    },
+                  ),
                 ),
               ),
             ),

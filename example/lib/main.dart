@@ -1,8 +1,5 @@
 import 'dart:ui';
-
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_boring_avatars_example/control_bar.dart';
 import 'package:random_name_generator/random_name_generator.dart';
@@ -190,7 +187,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
                   type: widget.type,
                   palette: widget.colorPalette,
                 ).toImage(
-                  size: const Size.square(256),
+                  size: const Size.square(512),
                 );
 
                 final pngData =

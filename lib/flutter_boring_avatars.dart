@@ -14,5 +14,3 @@ export './src/painter/marble.dart';
 export './src/painter/pixel.dart';
 export './src/painter/ring.dart';
 export './src/painter/sunset.dart';
-
-export './src/tools.dart';

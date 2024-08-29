@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  svg_path_parser: ^1.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'painter/cross.dart';
@@ -42,6 +43,8 @@ abstract class AvatarCustomPainter extends CustomPainter {
       ..rotateZ(rotate * (pi / 180))
       ..translate(-boxSize / 2, -boxSize / 2)
       ..scale(scale, scale);
+
+
     Path path = parseSvgPath(p);
     path = path.transform(transform.storage);
     path = path.transform(resizeTransform.storage);
@@ -84,6 +87,7 @@ abstract class AvatarCustomPainter extends CustomPainter {
   }
 
   double cX(double x) => x * (size.width / boxSize);
+
   double cY(double y) => y * (size.height / boxSize);
 }
 
@@ -131,6 +135,15 @@ abstract class BoringAvatarData {
           palette: palette,
         );
     }
+  }
+
+  Future<ui.Image> toImage({Size size = const Size.square(128)}) {
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    Canvas canvas = Canvas(recorder);
+    painter.paint(canvas, size);
+    return recorder
+        .endRecording()
+        .toImage(size.width.floor(), size.height.floor());
   }
 }
 

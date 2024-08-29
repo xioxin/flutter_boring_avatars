@@ -4,15 +4,46 @@ import '../utilities.dart';
 import '../painter.dart';
 import '../palette.dart';
 
-const List<String> _avatarRingPath = [
-  'M0 0h90v45H0z',
-  'M0 45h90v45H0z',
-  'M83 45a38 38 0 00-76 0h76z',
-  'M83 45a38 38 0 01-76 0h76z',
-  'M77 45a32 32 0 10-64 0h64z',
-  'M77 45a32 32 0 11-64 0h64z',
-  'M71 45a26 26 0 00-52 0h52z',
-  'M71 45a26 26 0 01-52 0h52z',
+final List<Path> _avatarRingPathList = [
+  Path()
+    ..moveTo(0, 0) // M0 0
+    ..relativeLineTo(90, 0) // h90
+    ..relativeLineTo(0, 45) //v45
+    ..lineTo(0, 45) // H0
+    ..close(), // z
+  Path()
+    ..moveTo(0, 45) // M0 45
+    ..relativeLineTo(90, 0) // h90
+    ..relativeLineTo(0, 45) //v45
+    ..lineTo(0, 90) // H0
+    ..close(), // z
+  Path()
+    ..moveTo(83, 45) // M83 45
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 38), 0, -pi, false)
+    ..close(), // z
+  Path()
+    ..moveTo(83, 45) // M83 45
+    ..arcTo(
+        Rect.fromCircle(center: const Offset(45, 45), radius: 38), 0, pi, false)
+    ..close(), // z
+  Path()
+    ..moveTo(77, 45) // M77 45
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 32), 0, -pi, false)
+    ..close(), // z
+  Path()
+    ..moveTo(77, 45) // M77 45
+    ..arcTo(
+        Rect.fromCircle(center: const Offset(45, 45), radius: 32), 0, pi, false)
+    ..close(), // z
+  Path()
+    ..moveTo(71, 45) // M71 45
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 26), 0, -pi, false)
+    ..close(), // z
+  Path()
+    ..moveTo(71, 45) // M71 45
+    ..arcTo(
+        Rect.fromCircle(center: const Offset(45, 45), radius: 26), 0, pi, false)
+    ..close(), // z
 ];
 
 class BoringAvatarRingData extends BoringAvatarData {
@@ -28,7 +59,7 @@ class BoringAvatarRingData extends BoringAvatarData {
       BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
     final numFromName = getHashCode(name);
     final colorsShuffle =
-        List.generate(5, (i) => palette.getColor(numFromName + i + 1));
+        List.generate(5, (i) => palette.getColor(numFromName + i ));
     colorList = [
       colorsShuffle[0],
       colorsShuffle[1],
@@ -84,10 +115,18 @@ class AvatarRingPainter extends AvatarCustomPainter {
     this.size = size;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     int i = 0;
-    for (var pathString in _avatarRingPath) {
+    final scaleX = size.width / boxSize;
+    final scaleY = size.height / boxSize;
+    final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
+
+    for (var path in _avatarRingPathList) {
       final color = properties.colorList[i++];
-      canvas.drawPath(svgPath(pathString), fillPaint(color));
+      canvas.drawPath(
+        path.transform(resizeTransform.storage),
+        fillPaint(color),
+      );
     }
+
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), cX(23),
         fillPaint(properties.colorList.last));
   }

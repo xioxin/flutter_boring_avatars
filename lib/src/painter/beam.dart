@@ -228,10 +228,19 @@ class AvatarBeamPainter extends AvatarCustomPainter {
         .storage);
     final mouthSpread = 19 + p.mouthSpread;
     if (p.isMouthOpen) {
-      final mouthPath1 = svgPath('M15 ${mouthSpread}c2 1 4 1 6 0');
+      final mouthPath1 = Path()
+        ..moveTo(cX(15), cY(mouthSpread))
+        ..cubicTo(cX(17), cY(mouthSpread + 1), cX(19), cY(mouthSpread + 1),
+            cX(21), cY(mouthSpread));
       canvas.drawPath(mouthPath1, roundStrokePaint(p.faceColor, 1.0));
     } else {
-      final mouthPath2 = svgPath('M13,$mouthSpread a1,0.75 0 0,0 10,0');
+      final mouthPath2 = Path()
+        ..moveTo(cX(13), cY(mouthSpread))
+        ..arcToPoint(Offset(cX(23), cY(mouthSpread)),
+            radius: Radius.elliptical(cX(1), cY(0.75)),
+            rotation: 0,
+            largeArc: false,
+            clockwise: false);
       canvas.drawPath(
           mouthPath2, fillPaint(p.isMouthOpen ? p.wrapperColor : p.faceColor));
     }

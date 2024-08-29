@@ -84,7 +84,7 @@ class BoringAvatarPixelData extends BoringAvatarData {
       BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
     final numFromName = getHashCode(name);
     colorList =
-        List.generate(64, (i) => palette.getColor(numFromName % (i + 13)));
+        List.generate(64, (i) => palette.getColor(numFromName % (i + 1)));
   }
 
   @override

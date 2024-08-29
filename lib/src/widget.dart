@@ -9,15 +9,17 @@ import 'inherited.dart';
 class BoringAvatarCanvas extends StatelessWidget {
   /// The data used to draw the avatar.
   final BoringAvatarData avatarData;
+  final Widget? child;
 
   /// Creates a [BoringAvatarCanvas] widget.
-  const BoringAvatarCanvas({super.key, required this.avatarData});
+  const BoringAvatarCanvas({super.key, required this.avatarData, this.child});
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size.infinite,
       painter: avatarData.painter,
+      child: child,
     );
   }
 

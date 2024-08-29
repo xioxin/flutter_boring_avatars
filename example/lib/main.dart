@@ -44,7 +44,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   avatarItem(int index) {
     final name = names[index];
-
     return AvatarInputWidget(
         name: name,
         resetInput: names.hashCode,
@@ -56,53 +55,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             names[index] = name;
           });
         });
-
-    // return Column(
-    //   children: [
-    //     Expanded(
-    //       child: AnimatedBoringAvatar(
-    //         duration: const Duration(milliseconds: 1000),
-    //         curve: Curves.easeInOutCubicEmphasized,
-    //         name: name,
-    //         palette: colorPalette,
-    //         type: type,
-    //         shape: const OvalBorder(),
-    //       ),
-    //     ),
-    //     const SizedBox(height: 8),
-    //     SizedBox(
-    //       height: 24,
-    //       child: TextField(
-    //         key: ValueKey('input:$index'),
-    //         decoration: InputDecoration(
-    //           contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-    //           focusedBorder: const OutlineInputBorder(
-    //             borderSide: BorderSide(color: Colors.black, width: 1),
-    //             borderRadius: BorderRadius.all(Radius.circular(32)),
-    //           ),
-    //           enabledBorder: OutlineInputBorder(
-    //             borderSide:
-    //                 BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
-    //             borderRadius: const BorderRadius.all(Radius.circular(32)),
-    //           ),
-    //         ),
-    //         // controller: TextEditingController.fromValue(
-    //         //   TextEditingValue(text: name),
-    //         // ),
-    //         style: TextStyle(
-    //           fontSize: 12,
-    //         ),
-    //         textAlign: TextAlign.center,
-    //         onChanged: (v) {
-    //           setState(() {
-    //             names[index] = v;
-    //           });
-    //         },
-    //       ),
-    //     ),
-    //     const SizedBox(height: 8),
-    //   ],
-    // );
   }
 
   @override
@@ -233,12 +185,14 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
             shape: widget.shape,
             child: RawMaterialButton(
               onPressed: () async {
-                final image = await createBoringAvatarToImage(
+                final image = await BoringAvatarData.generate(
                   name: widget.name,
-                  size: const Size(256, 256),
                   type: widget.type,
                   palette: widget.colorPalette,
+                ).toImage(
+                  size: const Size.square(256),
                 );
+
                 final pngData =
                     await image.toByteData(format: ImageByteFormat.png);
                 final clipboard = SystemClipboard.instance;

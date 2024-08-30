@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
@@ -171,12 +172,12 @@ class AvatarMarblePainter extends BoringAvatarPainter {
     final scaleX = size.width / boxSize;
     final scaleY = size.height / boxSize;
     final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
-    final path1Transform = getTransform(
-      rotate: p.element1Rotate,
-      scale: p.element1Scale,
-      translateX: p.element1TranslateX,
-      translateY: p.element1TranslateY,
-    );
+    final path1Transform = Matrix4.identity()
+      ..translate(p.element1TranslateX, p.element1TranslateY)
+      ..translate(boxSize / 2, boxSize / 2)
+      ..rotateZ(p.element1Rotate * (pi / 180))
+      ..translate(-boxSize / 2, -boxSize / 2)
+      ..scale(p.element1Scale, p.element1Scale);
 
     Path path1 = (Path()
           ..moveTo(32.414, 59.35) // M32.414 59.35
@@ -202,12 +203,12 @@ class AvatarMarblePainter extends BoringAvatarPainter {
       ..color = p.element2Color
       ..maskFilter = blur;
 
-    final path2Transform = getTransform(
-      rotate: p.element2Rotate,
-      scale: p.element2Scale,
-      translateX: p.element2TranslateX,
-      translateY: p.element2TranslateY,
-    );
+    final path2Transform = Matrix4.identity()
+      ..translate(p.element2TranslateX, p.element2TranslateY)
+      ..translate(boxSize / 2, boxSize / 2)
+      ..rotateZ(p.element2Rotate * (pi / 180))
+      ..translate(-boxSize / 2, -boxSize / 2)
+      ..scale(p.element2Scale, p.element2Scale);
 
     final path2 = (Path()
           ..moveTo(22.216, 24) // M22.216 24

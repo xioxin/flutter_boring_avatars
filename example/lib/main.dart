@@ -5,6 +5,8 @@ import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_boring_avatars_example/control_bar.dart';
 import 'package:random_name_generator/random_name_generator.dart';
 import 'package:super_clipboard/super_clipboard.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'colors.dart';
 
@@ -45,8 +47,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     return AvatarInputWidget(
         name: name,
         resetInput: names.hashCode,
-        colorPalette: colorPalette,
-        type: type,
         shape: shape,
         onNameChanged: (name) {
           setState(() {
@@ -67,6 +67,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           title: const Text('Boring Avatars'),
           actions: [
             IconButton(
+              tooltip: 'Github',
+              onPressed: () async {
+                final uri = Uri.parse(
+                    'https://github.com/xioxin/flutter_boring_avatars');
+                if (!await launchUrl(uri, webOnlyWindowName: '_blank')) {
+                  throw Exception('Could not launch $uri');
+                }
+              },
+              icon: const Icon(TablerIcons.brand_github),
+            ),
+            IconButton(
               tooltip: 'Randomize All',
               onPressed: () {
                 setState(() {
@@ -75,25 +86,29 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                   colorPalette = BoringAvatarPalette(getRandomColors());
                 });
               },
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(TablerIcons.refresh),
             ),
           ],
         ),
         body: Stack(
           children: [
-            Positioned.fill(
-              child: GridView.builder(
-                padding: const EdgeInsets.only(
-                    left: 32, top: 220, right: 32, bottom: 32),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+            DefaultBoringAvatarStyle(
+              type: type,
+              palette: colorPalette,
+              child: Positioned.fill(
+                child: GridView.builder(
+                  padding: const EdgeInsets.only(
+                      left: 32, top: 180, right: 32, bottom: 32),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 150,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: names.length,
+                  itemBuilder: (context, index) {
+                    return avatarItem(index);
+                  },
                 ),
-                itemCount: names.length,
-                itemBuilder: (context, index) {
-                  return avatarItem(index);
-                },
               ),
             ),
             Positioned(
@@ -138,16 +153,12 @@ class AvatarInputWidget extends StatefulWidget {
   const AvatarInputWidget({
     Key? key,
     required this.name,
-    required this.colorPalette,
-    required this.type,
     required this.onNameChanged,
     required this.resetInput,
     required this.shape,
   }) : super(key: key);
 
   final String name;
-  final BoringAvatarPalette colorPalette;
-  final BoringAvatarType type;
   final ValueChanged<String> onNameChanged;
   final int resetInput;
   final ShapeBorder shape;
@@ -193,16 +204,20 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
             duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOutCubicEmphasized,
             name: widget.name,
-            palette: widget.colorPalette,
-            type: widget.type,
             shape: widget.shape,
             child: RawMaterialButton(
               shape: widget.shape,
               onPressed: () async {
+                final type = DefaultBoringAvatarType.maybeOf(context)?.type ??
+                    BoringAvatarType.marble;
+                final colorPalette =
+                    DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
+                        BoringAvatarPalette.defaultPalette;
+
                 final image = await BoringAvatarData.generate(
                   name: widget.name,
-                  type: widget.type,
-                  palette: widget.colorPalette,
+                  type: type,
+                  palette: colorPalette,
                   shape: widget.shape,
                 ).toImage(
                   size: const Size.square(512),
@@ -210,6 +225,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
 
                 final pngData =
                     await image.toByteData(format: ImageByteFormat.png);
+
                 final clipboard = SystemClipboard.instance;
                 if (clipboard == null) {
                   return; // Clipboard API is not supported on this platform.

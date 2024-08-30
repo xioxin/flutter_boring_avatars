@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_boring_avatars_example/control_bar.dart';
@@ -173,6 +174,21 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
     return Column(
       children: [
         Expanded(
+          // child: AnimatedContainer(
+          //   duration: const Duration(milliseconds: 1000),
+          //   curve: Curves.easeInOutCubicEmphasized,
+          //   decoration: BoringAvatarDecoration(
+          //     avatarData: BoringAvatarData.generate(
+          //       name: widget.name,
+          //       palette: widget.colorPalette,
+          //       type: widget.type,
+          //       shape: widget.shape,
+          //     ),
+          //   ),
+          //   child: const AspectRatio(
+          //     aspectRatio: 1,
+          //   ),
+          // ),
           child: AnimatedBoringAvatar(
             duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOutCubicEmphasized,
@@ -181,11 +197,13 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
             type: widget.type,
             shape: widget.shape,
             child: RawMaterialButton(
+              shape: widget.shape,
               onPressed: () async {
                 final image = await BoringAvatarData.generate(
                   name: widget.name,
                   type: widget.type,
                   palette: widget.colorPalette,
+                  shape: widget.shape,
                 ).toImage(
                   size: const Size.square(512),
                 );

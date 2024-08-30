@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'dart:math' as math;
 
 // https://github.com/Experience-Monks/nice-color-palettes
-const NICE_COLOR_PALETTES = [
+const niceColorPalettes = [
   [Color(0xFF69d2e7), Color(0xFFa7dbd8), Color(0xFFe0e4cc), Color(0xFFf38630), Color(0xFFfa6900)],
   [Color(0xFFfe4365), Color(0xFFfc9d9a), Color(0xFFf9cdad), Color(0xFFc8c8a9), Color(0xFF83af9b)],
   [Color(0xFFecd078), Color(0xFFd95b43), Color(0xFFc02942), Color(0xFF542437), Color(0xFF53777a)],
@@ -999,6 +999,6 @@ const NICE_COLOR_PALETTES = [
 
 // 随机获取颜色
 List<Color> getRandomColors() {
-  final index = math.Random().nextInt(NICE_COLOR_PALETTES.length);
-  return NICE_COLOR_PALETTES[index];
+  final index = math.Random().nextInt(niceColorPalettes.length);
+  return niceColorPalettes[index];
 }

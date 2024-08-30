@@ -76,13 +76,15 @@ class BoringAvatarPixelData extends BoringAvatarData {
 
   BoringAvatarPixelData({
     required this.colorList,
+    super.shape,
   });
 
-  BoringAvatarPixelData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
-    final numFromName = getHashCode(name);
+  BoringAvatarPixelData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
+    final numFromName = boringAvatarHashCode(name);
     colorList =
         List.generate(64, (i) => palette.getColor(numFromName % (i + 1)));
   }
@@ -94,13 +96,14 @@ class BoringAvatarPixelData extends BoringAvatarData {
     if (other is BoringAvatarPixelData) {
       if (colorList.length != other.colorList.length) return false;
       int i = 0;
-      return colorList.every((c) => c == other.colorList[i++]);
+      return colorList.every((c) => c == other.colorList[i++]) &&
+          shape == other.shape;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hashAll(colorList);
+  int get hashCode => Object.hashAll([...colorList, shape]);
 
   @override
   BoringAvatarData lerp(BoringAvatarData end, double t) {
@@ -109,25 +112,32 @@ class BoringAvatarPixelData extends BoringAvatarData {
     final b = end as BoringAvatarPixelData;
     final newColor = List.generate(max(a.colorList.length, b.colorList.length),
         (index) => Color.lerp(a.colorList[index], b.colorList[index], t)!);
-    return BoringAvatarPixelData(colorList: newColor);
+    return BoringAvatarPixelData(
+      colorList: newColor,
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
+    );
   }
 
   @override
-  CustomPainter get painter => AvatarPixelPainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarPixelPainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarPixelPainter extends AvatarCustomPainter {
+class AvatarPixelPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarPixelData properties;
 
   @override
   double get boxSize => 64;
 
-  AvatarPixelPainter(this.properties);
+  AvatarPixelPainter(this.properties, Rect rect)
+      : super(boxSize: 64, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void avatarPaint(Canvas canvas) {
     canvas.save();
-    this.size = size;
     int i = 0;
     final itemWidth = size.width / 8;
     final itemHeight = size.height / 8;
@@ -144,9 +154,4 @@ class AvatarPixelPainter extends AvatarCustomPainter {
     canvas.restore();
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarPixelPainter &&
-        oldDelegate.properties != properties;
-  }
 }

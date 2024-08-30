@@ -36,6 +36,7 @@ class BoringAvatarBeamData extends BoringAvatarData {
     required this.faceRotate,
     required this.faceTranslateX,
     required this.faceTranslateY,
+    super.shape,
   });
 
   @override
@@ -57,7 +58,8 @@ class BoringAvatarBeamData extends BoringAvatarData {
           mouthSpread == other.mouthSpread &&
           faceRotate == other.faceRotate &&
           faceTranslateX == other.faceTranslateX &&
-          faceTranslateY == other.faceTranslateY;
+          faceTranslateY == other.faceTranslateY &&
+          shape == other.shape;
     }
     return false;
   }
@@ -78,37 +80,9 @@ class BoringAvatarBeamData extends BoringAvatarData {
         mouthSpread,
         faceRotate,
         faceTranslateX,
-        faceTranslateY
+        faceTranslateY,
+        shape,
       ]);
-
-  // static BoringAvatarBeamData? lerp2(
-  //     BoringAvatarBeamData? a, BoringAvatarBeamData? b, double t) {
-  //   assert(a != null);
-  //   assert(b != null);
-  //   a ??= BoringAvatarBeamData.empty();
-  //   b ??= BoringAvatarBeamData.empty();
-  //   return BoringAvatarBeamData(
-  //     wrapperColor: Color.lerp(a.wrapperColor, b.wrapperColor, t)!,
-  //     faceColor: Color.lerp(a.faceColor, b.faceColor, t)!,
-  //     backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t)!,
-  //     wrapperTranslateX:
-  //         lerpDouble(a.wrapperTranslateX, b.wrapperTranslateX, t),
-  //     wrapperTranslateY:
-  //         lerpDouble(a.wrapperTranslateY, b.wrapperTranslateY, t),
-  //     wrapperRotate: lerpRotate(a.wrapperRotate, b.wrapperRotate, t),
-  //     wrapperRadius: lerpDouble(a.wrapperRadius, b.wrapperRadius, t),
-  //     wrapperScale: lerpDouble(a.wrapperScale, b.wrapperScale, t),
-  //     isMouthOpen: t >= 0.5 ? b.isMouthOpen : a.isMouthOpen,
-  //     isCircle: t >= 0.5 ? b.isCircle : a.isCircle,
-  //     // isMouthOpen: b.isMouthOpen,
-  //     // isCircle: b.isCircle,
-  //     eyeSpread: lerpDouble(a.eyeSpread, b.eyeSpread, t),
-  //     mouthSpread: lerpDouble(a.mouthSpread, b.mouthSpread, t),
-  //     faceRotate: lerpRotate(a.faceRotate, b.faceRotate, t),
-  //     faceTranslateX: lerpDouble(a.faceTranslateX, b.faceTranslateX, t),
-  //     faceTranslateY: lerpDouble(a.faceTranslateY, b.faceTranslateY, t),
-  //   );
-  // }
 
   @override
   BoringAvatarData lerp(BoringAvatarData end, double t) {
@@ -133,6 +107,7 @@ class BoringAvatarBeamData extends BoringAvatarData {
       faceRotate: lerpRotate(a.faceRotate, b.faceRotate, t),
       faceTranslateX: lerpDouble(a.faceTranslateX, b.faceTranslateX, t),
       faceTranslateY: lerpDouble(a.faceTranslateY, b.faceTranslateY, t),
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
     );
   }
 
@@ -154,12 +129,13 @@ class BoringAvatarBeamData extends BoringAvatarData {
     faceTranslateY = 0;
   }
 
-  BoringAvatarBeamData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
+  BoringAvatarBeamData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
     const double boxSize = 36;
-    final numFromName = getHashCode(name);
+    final numFromName = boringAvatarHashCode(name);
     wrapperColor = palette.getColor(numFromName);
     final preTranslateX = getUnit(numFromName, 10, 1).toDouble();
     wrapperTranslateX =
@@ -186,20 +162,21 @@ class BoringAvatarBeamData extends BoringAvatarData {
   }
 
   @override
-  CustomPainter get painter => AvatarBeamPainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarBeamPainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarBeamPainter extends AvatarCustomPainter {
+class AvatarBeamPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarBeamData properties;
 
-  @override
-  double get boxSize => 36;
-
-  AvatarBeamPainter(this.properties);
+  AvatarBeamPainter(this.properties, Rect rect)
+      : super(boxSize: 36, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
+  void avatarPaint(Canvas canvas) {
     canvas.save();
     final p = properties;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
@@ -252,11 +229,5 @@ class AvatarBeamPainter extends AvatarCustomPainter {
         RRect.fromRectXY(rEyeRect, cX(1), cX(1)), fillPaint(p.faceColor));
     canvas.transform(Matrix4.identity().storage);
     canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarBeamPainter &&
-        oldDelegate.properties != properties;
   }
 }

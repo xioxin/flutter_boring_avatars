@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
@@ -19,7 +20,8 @@ final List<Path> _avatarRingPathList = [
     ..close(), // z
   Path()
     ..moveTo(83, 45) // M83 45
-    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 38), 0, -pi, false)
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 38), 0, -pi,
+        false)
     ..close(), // z
   Path()
     ..moveTo(83, 45) // M83 45
@@ -28,7 +30,8 @@ final List<Path> _avatarRingPathList = [
     ..close(), // z
   Path()
     ..moveTo(77, 45) // M77 45
-    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 32), 0, -pi, false)
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 32), 0, -pi,
+        false)
     ..close(), // z
   Path()
     ..moveTo(77, 45) // M77 45
@@ -37,7 +40,8 @@ final List<Path> _avatarRingPathList = [
     ..close(), // z
   Path()
     ..moveTo(71, 45) // M71 45
-    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 26), 0, -pi, false)
+    ..arcTo(Rect.fromCircle(center: const Offset(45, 45), radius: 26), 0, -pi,
+        false)
     ..close(), // z
   Path()
     ..moveTo(71, 45) // M71 45
@@ -51,15 +55,17 @@ class BoringAvatarRingData extends BoringAvatarData {
 
   BoringAvatarRingData({
     required this.colorList,
+    super.shape,
   });
 
-  BoringAvatarRingData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
-    final numFromName = getHashCode(name);
+  BoringAvatarRingData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
+    final numFromName = boringAvatarHashCode(name);
     final colorsShuffle =
-        List.generate(5, (i) => palette.getColor(numFromName + i ));
+        List.generate(5, (i) => palette.getColor(numFromName + i));
     colorList = [
       colorsShuffle[0],
       colorsShuffle[1],
@@ -75,18 +81,15 @@ class BoringAvatarRingData extends BoringAvatarData {
 
   @override
   operator ==(Object other) {
-    if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
     if (other is BoringAvatarRingData) {
-      if (colorList.length != other.colorList.length) return false;
-      int i = 0;
-      return colorList.every((c) => c == other.colorList[i++]);
+      return listEquals(colorList, other.colorList) && shape == other.shape;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hashAll(colorList);
+  int get hashCode => Object.hashAll([...colorList, shape]);
 
   @override
   BoringAvatarData lerp(BoringAvatarData end, double t) {
@@ -95,24 +98,31 @@ class BoringAvatarRingData extends BoringAvatarData {
     final b = end as BoringAvatarRingData;
     final newColor = List.generate(max(a.colorList.length, b.colorList.length),
         (index) => Color.lerp(a.colorList[index], b.colorList[index], t)!);
-    return BoringAvatarRingData(colorList: newColor);
+    return BoringAvatarRingData(
+      colorList: newColor,
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
+    );
   }
 
   @override
-  CustomPainter get painter => AvatarRingPainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarRingPainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarRingPainter extends AvatarCustomPainter {
+class AvatarRingPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarRingData properties;
 
   @override
   double get boxSize => 90;
 
-  AvatarRingPainter(this.properties);
+  AvatarRingPainter(this.properties, Rect rect)
+      : super(boxSize: 90, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
+  void avatarPaint(Canvas canvas) {
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     int i = 0;
     final scaleX = size.width / boxSize;
@@ -131,9 +141,4 @@ class AvatarRingPainter extends AvatarCustomPainter {
         fillPaint(properties.colorList.last));
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarRingPainter &&
-        oldDelegate.properties != properties;
-  }
 }

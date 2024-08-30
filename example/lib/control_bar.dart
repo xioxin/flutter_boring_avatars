@@ -15,7 +15,7 @@ class ControlBarWidget extends StatelessWidget {
   final ShapeBorder shape;
   final ValueChanged<ShapeBorder>? onShapeChanged;
 
-  ControlBarWidget({
+  const ControlBarWidget({
     super.key,
     required this.type,
     required this.palette,
@@ -98,11 +98,11 @@ class ControlBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<ShapeBorder, Widget> shapes = {
-      const OvalBorder(): Icon(Icons.circle_outlined),
+      const OvalBorder(): const Icon(Icons.circle_outlined),
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-      ): Icon(Icons.rounded_corner),
-      const Border(): Icon(Icons.square_outlined),
+      ): const Icon(Icons.rounded_corner),
+      const Border(): const Icon(Icons.square_outlined),
       BeveledRectangleBorder(
         borderRadius: BorderRadius.circular(24),
       ): Padding(
@@ -110,10 +110,10 @@ class ControlBarWidget extends StatelessWidget {
         child: Material(
           shape: BeveledRectangleBorder(
             borderRadius: BorderRadius.circular(5),
-            side: BorderSide(width: 1),
+            side: const BorderSide(width: 1),
           ),
           color: Colors.transparent,
-          child: SizedBox(
+          child: const SizedBox(
             width: 15,
             height: 15,
           ),
@@ -153,7 +153,7 @@ class ControlBarWidget extends StatelessWidget {
               margin: EdgeInsets.zero,
               shape: cardShape,
               child: Padding(
-                padding: EdgeInsets.all(padding),
+                padding: const EdgeInsets.all(padding),
                 // buttons
                 child: Wrap(
                   spacing: 4,
@@ -200,7 +200,7 @@ class ControlBarWidget extends StatelessWidget {
               shape: cardShape,
               elevation: 1,
               child: Padding(
-                padding: EdgeInsets.all(padding),
+                padding: const EdgeInsets.all(padding),
                 child: Wrap(
                   spacing: spacing,
                   runSpacing: spacing,
@@ -243,7 +243,7 @@ class ControlBarWidget extends StatelessWidget {
               margin: EdgeInsets.zero,
               shape: cardShape,
               child: Padding(
-                padding: EdgeInsets.all(padding),
+                padding: const EdgeInsets.all(padding),
                 // buttons
                 child: Wrap(
                   spacing: spacing,
@@ -266,7 +266,7 @@ class ControlBarWidget extends StatelessWidget {
                         icon: icon,
                         style: IconButton.styleFrom(
                           iconSize: 20,
-                          padding: EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(6),
                           minimumSize: Size.zero,
                           backgroundColor: backgroundColor,
                           foregroundColor: foregroundColor,
@@ -280,7 +280,7 @@ class ControlBarWidget extends StatelessWidget {
               shape: cardShape,
               elevation: 1,
               child: Padding(
-                padding: EdgeInsets.all(padding),
+                padding: const EdgeInsets.all(padding),
                 child: Tooltip(
                   message: 'Randomize names',
                   child: FilledButton.tonal(

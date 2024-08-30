@@ -6,15 +6,13 @@ class BoringAvatarCrossData extends BoringAvatarData {
   BoringAvatarData end;
   double t;
 
-  BoringAvatarCrossData({
-    required this.begin,
-    required this.end,
-    required this.t,
-  });
+  BoringAvatarCrossData(
+      {required this.begin, required this.end, required this.t, super.shape});
 
   static BoringAvatarData mixed({
     required BoringAvatarData begin,
     required BoringAvatarData end,
+    ShapeBorder? shape,
     required double t,
   }) {
     if (begin is BoringAvatarCrossData) {
@@ -23,55 +21,75 @@ class BoringAvatarCrossData extends BoringAvatarData {
     if (begin.runtimeType == end.runtimeType) {
       return begin.lerp(end, t);
     }
-    return BoringAvatarCrossData(begin: begin, end: end, t: t);
+    return BoringAvatarCrossData(
+      begin: begin,
+      end: end,
+      t: t,
+      shape: ShapeBorder.lerp(begin.shape, end.shape, t),
+    );
   }
 
   BoringAvatarCrossData copyWith({
     BoringAvatarData? begin,
     BoringAvatarData? end,
+    ShapeBorder? shape,
     double? t,
   }) {
     return BoringAvatarCrossData(
       begin: begin ?? this.begin,
       end: end ?? this.end,
       t: t ?? this.t,
+      shape: ShapeBorder.lerp(
+        begin?.shape,
+        end?.shape,
+        t ?? this.t,
+      ),
     );
   }
 
+  @override
   BoringAvatarData lerp(BoringAvatarData end, double t) {
     if (t == 1) return end;
-    return this.copyWith(end: end, t: t);
+    return copyWith(end: end, t: t);
   }
 
-  CustomPainter get painter {
-    return BoringAvatarCrossPainter(this);
+  @override
+  void paint(Canvas canvas, Rect rect) {
+    final painter = BoringAvatarCrossPainter(this, rect);
+    painter.paint(canvas);
   }
+
+  @override
+  operator ==(Object other) {
+    if (other is BoringAvatarCrossData) {
+      return other.begin == begin &&
+          other.end == end &&
+          other.t == t &&
+          other.shape == shape;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([begin, end, t, shape]);
 }
 
-class BoringAvatarCrossPainter extends AvatarCustomPainter {
+class BoringAvatarCrossPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarCrossData properties;
 
-  @override
-  double get boxSize => 80;
-
-  BoringAvatarCrossPainter(this.properties);
+  BoringAvatarCrossPainter(this.properties, Rect rect)
+      : super(boxSize: 64, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
+  void avatarPaint(Canvas canvas) {
     final p = properties;
     canvas.save();
-    p.begin.painter.paint(canvas, size);
-    canvas.saveLayer(
-        Offset.zero & size, Paint()..color = Colors.white.withOpacity(p.t));
-    p.end.painter.paint(canvas, size);
+    p.begin.paint(canvas, Offset.zero & rect.size);
     canvas.restore();
+    canvas.saveLayer(Offset.zero & rect.size,
+        Paint()..color = Colors.white.withOpacity(p.t));
+    p.end.paint(canvas, Offset.zero & rect.size);
     canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is BoringAvatarCrossPainter &&
-        oldDelegate.properties != properties;
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
@@ -15,6 +16,7 @@ class BoringAvatarMarbleData extends BoringAvatarData {
   late double element2TranslateX;
   late double element2TranslateY;
   late double element2Scale;
+  late double element2Rotate;
 
   BoringAvatarMarbleData({
     required this.bgColor,
@@ -27,6 +29,8 @@ class BoringAvatarMarbleData extends BoringAvatarData {
     required this.element2TranslateX,
     required this.element2TranslateY,
     required this.element2Scale,
+    required this.element2Rotate,
+    super.shape,
   });
 
   // static AvatarMarbleData? lerp(
@@ -50,12 +54,13 @@ class BoringAvatarMarbleData extends BoringAvatarData {
   //   );
   // }
 
-  BoringAvatarMarbleData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
+  BoringAvatarMarbleData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
     const double boxSize = 80;
-    final numFromName = getHashCode(name);
+    final numFromName = boringAvatarHashCode(name);
     int i = 0;
     bgColor = palette.getColor(numFromName + i);
 
@@ -71,6 +76,7 @@ class BoringAvatarMarbleData extends BoringAvatarData {
     element2TranslateX = getUnit(numFromName * (i + 1), boxSize ~/ 10, 1);
     element2TranslateY = getUnit(numFromName * (i + 1), boxSize ~/ 10, 2);
     element2Scale = 1.2 + getUnit(numFromName * (i + 1), boxSize ~/ 20) / 10;
+    element2Rotate = getUnit(numFromName * (i + 1), 360, 1);
   }
 
   @override
@@ -87,7 +93,9 @@ class BoringAvatarMarbleData extends BoringAvatarData {
           element2Color == other.element2Color &&
           element2TranslateX == other.element2TranslateX &&
           element2TranslateY == other.element2TranslateY &&
-          element2Scale == other.element2Scale;
+          element2Scale == other.element2Scale &&
+          element2Rotate == other.element2Rotate &&
+          shape == other.shape;
     }
     return false;
   }
@@ -104,6 +112,8 @@ class BoringAvatarMarbleData extends BoringAvatarData {
         element2TranslateX,
         element2TranslateY,
         element2Scale,
+        element2Rotate,
+        shape
       ]);
 
   @override
@@ -126,70 +136,92 @@ class BoringAvatarMarbleData extends BoringAvatarData {
       element2TranslateY:
           lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
       element2Scale: lerpDouble(a.element2Scale, b.element2Scale, t),
+      element2Rotate: lerpRotate(a.element2Rotate, b.element2Rotate, t),
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
     );
   }
 
   @override
-  CustomPainter get painter => AvatarMarblePainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarMarblePainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarMarblePainter extends AvatarCustomPainter {
+class AvatarMarblePainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarMarbleData properties;
 
   static const int elements = 3;
 
-  @override
-  double get boxSize => 80;
-
-  AvatarMarblePainter(this.properties);
+  AvatarMarblePainter(this.properties, Rect rect)
+      : super(boxSize: 80, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
+  void avatarPaint(Canvas canvas) {
     final p = properties;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     final blur = MaskFilter.blur(
       BlurStyle.normal,
-      cX(14),
+      cX(7),
     );
-
     Paint paintFill = Paint()
       ..style = PaintingStyle.fill
       ..color = properties.bgColor;
-
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paintFill);
+    final scaleX = size.width / boxSize;
+    final scaleY = size.height / boxSize;
+    final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
+    final path1Transform = Matrix4.identity()
+      ..translate(p.element1TranslateX, p.element1TranslateY)
+      ..translate(boxSize / 2, boxSize / 2)
+      ..rotateZ(p.element1Rotate * (pi / 180))
+      ..translate(-boxSize / 2, -boxSize / 2)
+      ..scale(p.element1Scale, p.element1Scale);
 
-    final path1 = svgPath(
-        "M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z",
-        rotate: p.element1Rotate,
-        scale: p.element1Scale,
-        translateX: p.element1TranslateX,
-        translateY: p.element1TranslateY);
-
+    Path path1 = (Path()
+          ..moveTo(32.414, 59.35) // M32.414 59.35
+          ..lineTo(50.376, 70.5) // L50.376 70.5
+          ..lineTo(72.5, 70.5) // H72.5
+          ..lineTo(72.5, -0.5) // v-71
+          ..lineTo(33.728, -0.5) // H33.728
+          ..lineTo(26.5, 13.381) // L26.5 13.381
+          ..relativeLineTo(19.057, 27.08) // l19.057 27.08
+          ..close())
+        .transform(path1Transform.storage)
+        .transform(resizeTransform.storage);
     Paint paintFill1 = Paint()
       ..style = PaintingStyle.fill
       ..color = p.element1Color
       ..maskFilter = blur;
+
     canvas.drawPath(path1, paintFill1);
 
-    final path2 = svgPath(
-        "M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z",
-        rotate: p.element1Rotate, // Not bug
-        scale: p.element2Scale,
-        translateX: p.element2TranslateX,
-        translateY: p.element2TranslateY);
     final paintFill2 = Paint()
       ..style = PaintingStyle.fill
       ..blendMode = BlendMode.overlay
       ..color = p.element2Color
       ..maskFilter = blur;
 
-    canvas.drawPath(path2, paintFill2);
-  }
+    final path2Transform = Matrix4.identity()
+      ..translate(p.element2TranslateX, p.element2TranslateY)
+      ..translate(boxSize / 2, boxSize / 2)
+      ..rotateZ(p.element2Rotate * (pi / 180))
+      ..translate(-boxSize / 2, -boxSize / 2)
+      ..scale(p.element2Scale, p.element2Scale);
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarMarblePainter &&
-        oldDelegate.properties != properties;
+    final path2 = (Path()
+          ..moveTo(22.216, 24) // M22.216 24
+          ..lineTo(0, 46.75) // L0 46.75
+          ..relativeLineTo(14.108, 38.129) // l14.108 38.129
+          ..lineTo(78, 86) // L78 86
+          ..relativeLineTo(-3.081, -59.276) // l-3.081-59.276
+          ..relativeLineTo(-22.378, 4.005) // l-22.378 4.005
+          ..relativeLineTo(12.972, 20.186) // l12.972 20.186
+          ..relativeLineTo(-23.35, 27.395) // l-23.35 27.395
+          ..close())
+        .transform(path2Transform.storage)
+        .transform(resizeTransform.storage);
+    canvas.drawPath(path2, paintFill2);
   }
 }

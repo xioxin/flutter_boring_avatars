@@ -1,8 +1,7 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:svg_path_parser/svg_path_parser.dart';
 import 'painter/cross.dart';
-import 'utilities.dart';
 import 'palette.dart';
 import 'painter/bauhaus.dart';
 import 'painter/beam.dart';
@@ -20,33 +19,17 @@ enum BoringAvatarType {
   ring,
 }
 
-typedef BoringAvatarHashCodeFunc = int Function(String name);
+abstract class BoringAvatarPainter {
+  BoringAvatarData get properties;
 
-abstract class AvatarCustomPainter extends CustomPainter {
-  double get boxSize => 0;
-  Size size = Size.zero;
+  final double boxSize;
+  final Rect rect;
 
-  Path svgPath(
-    String p, {
-    double rotate = 0,
-    double scale = 1,
-    double translateX = 0,
-    double translateY = 0,
-  }) {
-    final scaleX = size.width / boxSize;
-    final scaleY = size.height / boxSize;
-    final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
-    final transform = Matrix4.identity()
-      ..translate(translateX, translateY)
-      ..translate(boxSize / 2, boxSize / 2)
-      ..rotateZ(rotate * (pi / 180))
-      ..translate(-boxSize / 2, -boxSize / 2)
-      ..scale(scale, scale);
-    Path path = parseSvgPath(p);
-    path = path.transform(transform.storage);
-    path = path.transform(resizeTransform.storage);
-    return path;
-  }
+  Size get size => rect.size;
+
+  late final Size scale = Size(size.width / boxSize, size.height / boxSize);
+
+  BoringAvatarPainter({required this.boxSize, required this.rect});
 
   Paint fillPaint(Color color) => Paint()
     ..style = PaintingStyle.fill
@@ -83,55 +66,105 @@ abstract class AvatarCustomPainter extends CustomPainter {
     return transform;
   }
 
-  double cX(double x) => x * (size.width / boxSize);
-  double cY(double y) => y * (size.height / boxSize);
+  double cX(double x) => x * scale.width;
+
+  double cY(double y) => y * scale.height;
+
+  paint(Canvas canvas) {
+    canvas.save();
+    if (properties.shape != null) {
+      final shape = properties.shape!;
+      shape.paint(canvas, rect);
+      canvas.clipPath(
+        shape.getInnerPath(
+          rect,
+          textDirection: TextDirection.ltr,
+        ),
+      );
+    }
+    canvas.translate(rect.left, rect.top);
+    avatarPaint(canvas);
+    canvas.restore();
+  }
+
+  @protected
+  void avatarPaint(Canvas canvas);
 }
 
 abstract class BoringAvatarData {
+  final ShapeBorder? shape;
+
+  BoringAvatarData({this.shape});
+
+  @override
+  operator ==(Object other) {
+    if (other is BoringAvatarData) {
+      return shape == other.shape;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => shape.hashCode;
+
   BoringAvatarData lerp(BoringAvatarData end, double t);
 
-  CustomPainter get painter;
-
-  BoringAvatarData();
-
-  factory BoringAvatarData.generate(
-      {required String name,
-      BoringAvatarType type = BoringAvatarType.marble,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
+  factory BoringAvatarData.generate({
+    required String name,
+    ShapeBorder? shape,
+    BoringAvatarType type = BoringAvatarType.marble,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
     switch (type) {
       case BoringAvatarType.bauhaus:
         return BoringAvatarBauhausData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
       case BoringAvatarType.marble:
         return BoringAvatarMarbleData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
       case BoringAvatarType.beam:
         return BoringAvatarBeamData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
       case BoringAvatarType.pixel:
         return BoringAvatarPixelData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
       case BoringAvatarType.ring:
         return BoringAvatarRingData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
       case BoringAvatarType.sunset:
         return BoringAvatarSunsetData.generate(
           name: name,
           palette: palette,
+          shape: shape,
         );
     }
   }
+
+  Future<ui.Image> toImage({Size size = const Size.square(128)}) {
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    Canvas canvas = Canvas(recorder);
+    paint(canvas, ui.Offset.zero & size);
+    return recorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+  }
+
+  void paint(Canvas canvas, Rect rect);
 }
 
 class BoringAvatarDataTween extends Tween<BoringAvatarData> {

@@ -3,6 +3,37 @@ import 'package:flutter/cupertino.dart';
 import 'painter.dart';
 import 'palette.dart';
 
+class DefaultBoringAvatarStyle extends StatelessWidget {
+  const DefaultBoringAvatarStyle({
+    super.key,
+    this.type,
+    this.palette,
+    required this.child,
+  });
+
+  final BoringAvatarType? type;
+  final BoringAvatarPalette? palette;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child = this.child;
+    if (type != null) {
+      child = DefaultBoringAvatarType(
+        type: type!,
+        child: child,
+      );
+    }
+    if (palette != null) {
+      child = DefaultBoringAvatarPalette(
+        palette: palette!,
+        child: child,
+      );
+    }
+    return child;
+  }
+}
+
 class DefaultBoringAvatarPalette extends InheritedWidget {
   const DefaultBoringAvatarPalette({
     super.key,

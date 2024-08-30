@@ -10,11 +10,6 @@ int boringAvatarHashCode(String name) {
   return hash.toSigned(32).abs();
 }
 
-int boringAvatarHashCodeOld(String name) {
-  if (name.codeUnits.isEmpty) return 0;
-  return name.codeUnits.reduce((a, b) => a + b);
-}
-
 int getModulus(int num, int max) => num % max;
 
 int getDigit(int number, int ntn) => (number / pow(10, ntn) % 10).floor();

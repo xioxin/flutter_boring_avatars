@@ -33,13 +33,15 @@ class BoringAvatarBauhausData extends BoringAvatarData {
     required this.element3TranslateY,
     required this.element3Color,
     required this.element3Rotate,
+    super.shape,
   });
 
-  BoringAvatarBauhausData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
-    final numFromName = getHashCode(name);
+  BoringAvatarBauhausData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
+    final numFromName = boringAvatarHashCode(name);
     const double boxSize = 80;
     final isSquare = getBoolean(numFromName, 2);
     int i = 0;
@@ -76,25 +78,27 @@ class BoringAvatarBauhausData extends BoringAvatarData {
     final a = this;
     final b = end as BoringAvatarBauhausData;
     return BoringAvatarBauhausData(
-        bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
-        element1TranslateX:
-            lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
-        element1TranslateY:
-            lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
-        element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
-        element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
-        element1Height: lerpDouble(a.element1Height, b.element1Height, t),
-        element2TranslateX:
-            lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
-        element2TranslateY:
-            lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
-        element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
-        element3TranslateX:
-            lerpDouble(a.element3TranslateX, b.element3TranslateX, t),
-        element3TranslateY:
-            lerpDouble(a.element3TranslateY, b.element3TranslateY, t),
-        element3Color: Color.lerp(a.element3Color, b.element3Color, t)!,
-        element3Rotate: lerpRotate180(a.element3Rotate, b.element3Rotate, t));
+      bgColor: Color.lerp(a.bgColor, b.bgColor, t)!,
+      element1TranslateX:
+          lerpDouble(a.element1TranslateX, b.element1TranslateX, t),
+      element1TranslateY:
+          lerpDouble(a.element1TranslateY, b.element1TranslateY, t),
+      element1Color: Color.lerp(a.element1Color, b.element1Color, t)!,
+      element1Rotate: lerpRotate(a.element1Rotate, b.element1Rotate, t),
+      element1Height: lerpDouble(a.element1Height, b.element1Height, t),
+      element2TranslateX:
+          lerpDouble(a.element2TranslateX, b.element2TranslateX, t),
+      element2TranslateY:
+          lerpDouble(a.element2TranslateY, b.element2TranslateY, t),
+      element2Color: Color.lerp(a.element2Color, b.element2Color, t)!,
+      element3TranslateX:
+          lerpDouble(a.element3TranslateX, b.element3TranslateX, t),
+      element3TranslateY:
+          lerpDouble(a.element3TranslateY, b.element3TranslateY, t),
+      element3Color: Color.lerp(a.element3Color, b.element3Color, t)!,
+      element3Rotate: lerpRotate180(a.element3Rotate, b.element3Rotate, t),
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
+    );
   }
 
   @override
@@ -114,7 +118,8 @@ class BoringAvatarBauhausData extends BoringAvatarData {
           element3TranslateX == other.element3TranslateX &&
           element3TranslateY == other.element3TranslateY &&
           element3Color == other.element3Color &&
-          element3Rotate == other.element3Rotate;
+          element3Rotate == other.element3Rotate &&
+          shape == other.shape;
     }
     return false;
   }
@@ -134,25 +139,27 @@ class BoringAvatarBauhausData extends BoringAvatarData {
         element3TranslateY,
         element3Color,
         element3Rotate,
+        shape,
       ]);
 
   @override
-  get painter => AvatarBauhausPainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarBauhausPainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarBauhausPainter extends AvatarCustomPainter {
+class AvatarBauhausPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarBauhausData properties;
 
-  @override
-  double get boxSize => 80;
-
-  AvatarBauhausPainter(this.properties);
+  AvatarBauhausPainter(this.properties, Rect rect)
+      : super(boxSize: 80, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
-    final p = properties;
+  void avatarPaint(Canvas canvas) {
     canvas.save();
+    final p = properties;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     canvas.drawRect(
         Rect.fromLTRB(0, 0, size.width, size.height), fillPaint(p.bgColor));
@@ -178,18 +185,13 @@ class AvatarBauhausPainter extends AvatarCustomPainter {
     canvas.transform(t2.storage);
 
     final t3 = getTransform(
-        translateX: p.element3TranslateX,
-        translateY: p.element3TranslateY,
-        rotate: p.element3Rotate);
+      translateX: p.element3TranslateX,
+      translateY: p.element3TranslateY,
+      rotate: p.element3Rotate,
+    );
     canvas.transform(t3.storage);
     canvas.drawLine(Offset(0, size.width / 2),
         Offset(size.height, size.height / 2), strokePaint(p.element3Color, 2));
     canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarBauhausPainter &&
-        oldDelegate.properties != properties;
   }
 }

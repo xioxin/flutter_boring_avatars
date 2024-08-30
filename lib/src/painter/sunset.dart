@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utilities.dart';
 import '../painter.dart';
@@ -10,56 +11,62 @@ class BoringAvatarSunsetData extends BoringAvatarData {
 
   BoringAvatarSunsetData({
     required this.colorList,
+    super.shape,
   });
 
-  BoringAvatarSunsetData.generate(
-      {required String name,
-      BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
-      BoringAvatarHashCodeFunc getHashCode = boringAvatarHashCode}) {
-    final numFromName = getHashCode(name);
+  BoringAvatarSunsetData.generate({
+    required String name,
+    super.shape,
+    BoringAvatarPalette palette = BoringAvatarPalette.defaultPalette,
+  }) {
+    final numFromName = boringAvatarHashCode(name);
     colorList = List.generate(4, (i) => palette.getColor(numFromName + i));
   }
 
   @override
-  operator == (Object other) {
-    if (identical(this, other)) return true;
+  operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
     if (other is BoringAvatarSunsetData) {
-      if (colorList.length != other.colorList.length) return false;
-      int i = 0;
-      return colorList.every((c) => c == other.colorList[i++]);
+      return listEquals(colorList, other.colorList) && shape == other.shape;
     }
-    return false;
+    return super == other;
   }
 
   @override
-  int get hashCode => Object.hashAll(colorList);
+  int get hashCode => Object.hashAll([...colorList, shape]);
 
   @override
-  BoringAvatarData lerp (BoringAvatarData end, double t) {
+  BoringAvatarData lerp(BoringAvatarData end, double t) {
     assert(end is BoringAvatarSunsetData);
     final a = this;
     final b = end as BoringAvatarSunsetData;
     final newColor = List.generate(max(a.colorList.length, b.colorList.length),
         (index) => Color.lerp(a.colorList[index], b.colorList[index], t)!);
-    return BoringAvatarSunsetData(colorList: newColor);
+    return BoringAvatarSunsetData(
+      colorList: newColor,
+      shape: ShapeBorder.lerp(a.shape, b.shape, t),
+    );
   }
 
   @override
-  CustomPainter get painter => AvatarSunsetPainter(this);
+  void paint(Canvas canvas, Rect rect) {
+    final painter = AvatarSunsetPainter(this, rect);
+    painter.paint(canvas);
+  }
 }
 
-class AvatarSunsetPainter extends AvatarCustomPainter {
+class AvatarSunsetPainter extends BoringAvatarPainter {
+  @override
   final BoringAvatarSunsetData properties;
 
   @override
   double get boxSize => 80;
 
-  AvatarSunsetPainter(this.properties);
+  AvatarSunsetPainter(this.properties, Rect rect)
+      : super(boxSize: 80, rect: rect);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    this.size = size;
+  void avatarPaint(Canvas canvas) {
     final p0 = properties.colorList[0];
     final p1 = properties.colorList[1];
     final p2 = properties.colorList[2];
@@ -83,11 +90,5 @@ class AvatarSunsetPainter extends AvatarCustomPainter {
               end: Alignment.bottomCenter)
           .createShader(rect2);
     canvas.drawRect(rect2, paint2);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is AvatarSunsetPainter &&
-        oldDelegate.properties != properties;
   }
 }

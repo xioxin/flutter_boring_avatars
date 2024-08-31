@@ -1,6 +1,11 @@
-# flutter_boring_avatars
+<img width="50px" align="right" alt="Github" src="./screenshots/logo.png" />
+
+flutter_boring_avatars
+------------
 
 [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/flutter_boring_avatars?include_prereleases)](https://pub.dev/packages/flutter_boring_avatars)
+
+English | [中文](README_zh.md)
 
 ## Features
 
@@ -11,6 +16,11 @@ This project is a Flutter implementation of [Boring Avatars](https://boringavata
 It differs from the original project in its implementation, using Canvas for rendering and adding transition animations.
 
 Check out the [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) to experience the effect.
+
+## Screenshots
+
+![preview1.png](screenshots%2Fpreview1.png)
+
 
 ## Installation
 Add the dependency in your `pubspec.yaml` file:
@@ -60,6 +70,15 @@ build(context) {
 }
 ```
 
+Use `ShapeBorder` to control the avatar shape and add a border
+```Dart
+BoringAvatar(
+  name: "Maria Mitchell",
+  type: BoringAvatarType.marble,
+  shape: OvalBorder(), // or RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
+);
+```
+
 Use the avatar for Decoration, it also supports transition animations when used in AnimatedContainer
 ```Dart
 Container(
@@ -78,6 +97,7 @@ final pngByteData = await image.toByteData(format: ImageByteFormat.png);
 
 ## Thanks
 Thanks to the developers of [Boring Avatars](https://boringavatars.com/).
+
 The example uses the [beautiful palette project](https://github.com/Experience-Monks/nice-color-palettes) from [Matt DesLauriers](https://www.mattdesl.com/).
 
 If you like this project, please give me a star.

@@ -15,6 +15,7 @@ class BoringAvatarCanvas extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size.infinite,
+      isComplex: true,
       painter: BoringAvatarCustomPainter(avatarData),
       child: child,
     );
@@ -123,6 +124,7 @@ class _AnimatedBoringCanvasState
       aspectRatio: 1,
       child: CustomPaint(
         size: Size.infinite,
+        isComplex: true,
         painter: BoringAvatarCustomPainter(avatarData),
         child: widget.child,
       ),
@@ -139,11 +141,13 @@ class _AnimatedBoringCanvasState
 
 class BoringAvatarCustomPainter extends CustomPainter {
   final BoringAvatarData avatarData;
+  Size lastSize = Size.zero;
 
   BoringAvatarCustomPainter(this.avatarData);
 
   @override
   void paint(Canvas canvas, Size size) {
+    lastSize = size;
     avatarData.paint(canvas, Offset.zero & size);
   }
 
@@ -153,6 +157,13 @@ class BoringAvatarCustomPainter extends CustomPainter {
       return avatarData != oldDelegate.avatarData;
     }
     return false;
+  }
+
+  @override
+  hitTest(Offset position) {
+    if(avatarData.shape == null) return true;
+    final hit = avatarData.shape!.getOuterPath(Offset.zero & lastSize).contains(position);
+    return hit;
   }
 }
 
@@ -232,7 +243,7 @@ class BoringAvatarDecoration extends Decoration {
   });
 
   @override
-  bool get isComplex => false;
+  bool get isComplex => true;
 
   @override
   BoringAvatarDecoration? lerpFrom(Decoration? a, double t) {
@@ -271,6 +282,20 @@ class BoringAvatarDecoration extends Decoration {
   @override
   BoxPainter createBoxPainter([void Function()? onChanged]) {
     return _BoringAvatarDecorationPainter(avatarData, onChanged);
+  }
+
+  @override
+  bool hitTest(Size size, Offset position, {TextDirection? textDirection}) {
+    if (avatarData.shape == null) return true;
+    return avatarData.shape!
+        .getOuterPath(Offset.zero & size, textDirection: textDirection)
+        .contains(position);
+  }
+
+  @override
+  getClipPath(Rect rect, TextDirection textDirection) {
+    if (avatarData.shape == null) return Path()..addRect(rect);
+    return avatarData.shape!.getInnerPath(rect, textDirection: textDirection);
   }
 }
 

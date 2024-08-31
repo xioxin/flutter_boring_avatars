@@ -14,9 +14,6 @@ void main() {
   runApp(const MaterialApp(home: MyApp()));
 }
 
-
-
-
 class AvatarInputWidget extends StatefulWidget {
   const AvatarInputWidget({
     Key? key,
@@ -53,7 +50,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
       name: widget.name,
       type: type,
       palette: colorPalette,
-      shape: widget.shape,
+      // shape: widget.shape,
     ).toImage(
       size: const Size.square(512),
     );
@@ -126,10 +123,6 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
   }
 }
 
-
-
-
-
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -182,6 +175,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           centerTitle: true,
           title: const Text('Boring Avatars'),
           actions: [
+            IconButton(
+              tooltip: 'Pub.dev',
+              onPressed: () async {
+                final uri = Uri.parse(
+                    'https://pub.dev/packages/flutter_boring_avatars');
+                if (!await launchUrl(uri, webOnlyWindowName: '_blank')) {
+                  throw Exception('Could not launch $uri');
+                }
+              },
+              icon: const Icon(TablerIcons.brand_flutter),
+            ),
             IconButton(
               tooltip: 'Github',
               onPressed: () async {

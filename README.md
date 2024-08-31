@@ -2,6 +2,8 @@
 
 [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/flutter_boring_avatars?include_prereleases)](https://pub.dev/packages/flutter_boring_avatars)
 
+English | [中文](README_zh.md)
+
 ## Features
 
 Boring avatars can generate unique avatars based on the username and color palette.
@@ -11,6 +13,12 @@ This project is a Flutter implementation of [Boring Avatars](https://boringavata
 It differs from the original project in its implementation, using Canvas for rendering and adding transition animations.
 
 Check out the [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) to experience the effect.
+
+
+## Screenshots
+
+![preview1.png](screenshots%2Fpreview1.png)
+
 
 ## Installation
 Add the dependency in your `pubspec.yaml` file:

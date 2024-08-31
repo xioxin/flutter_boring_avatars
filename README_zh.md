@@ -70,14 +70,14 @@ build(context) {
 }
 ```
 
-使用 `ShapeBorder` 控制头像形状，添加边框
+使用 `ShapeBorder` 控制头像形状和添加边框
 ```Dart
 BoringAvatar(
   name:"Maria Mitchell",
   type: BoringAvatarType.marble,
+  shape: OvalBorder(), // or RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
 );
 ```
-
 
 将头像用于Decoration, 同样的在AnimatedContainer中使用也支持过渡动画
 ```Dart

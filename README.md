@@ -17,7 +17,6 @@ It differs from the original project in its implementation, using Canvas for ren
 
 Check out the [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) to experience the effect.
 
-
 ## Screenshots
 
 ![preview1.png](screenshots%2Fpreview1.png)
@@ -69,6 +68,15 @@ build(context) {
     ),
   );
 }
+```
+
+Use `ShapeBorder` to control the avatar shape and add a border
+```Dart
+BoringAvatar(
+  name: "Maria Mitchell",
+  type: BoringAvatarType.marble,
+  shape: OvalBorder(), // or RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
+);
 ```
 
 Use the avatar for Decoration, it also supports transition animations when used in AnimatedContainer

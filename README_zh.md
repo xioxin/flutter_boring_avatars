@@ -70,6 +70,15 @@ build(context) {
 }
 ```
 
+使用 `ShapeBorder` 控制头像形状，添加边框
+```Dart
+BoringAvatar(
+  name:"Maria Mitchell",
+  type: BoringAvatarType.marble,
+);
+```
+
+
 将头像用于Decoration, 同样的在AnimatedContainer中使用也支持过渡动画
 ```Dart
 Container(
@@ -88,6 +97,7 @@ final pngByteData = await image.toByteData(format: ImageByteFormat.png);
 
 ## 感谢
 感谢 [Boring Avatars](https://boringavatars.com/) 的开发者们。
-在 Example 中使用了来自 [Matt DesLauriers](https://www.mattdesl.com/) 的[精美调色板项目](https://github.com/Experience-Monks/nice-color-palettes)。
+
+在示例中使用了来自 [Matt DesLauriers](https://www.mattdesl.com/) 的[精美调色板项目](https://github.com/Experience-Monks/nice-color-palettes)。
 
 如果你喜欢这个项目，请给我一个 Star。

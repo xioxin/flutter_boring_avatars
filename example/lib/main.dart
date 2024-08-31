@@ -9,6 +9,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'colors.dart';
+import 'test_page.dart';
 
 void main() {
   runApp(const MaterialApp(home: MyApp()));
@@ -42,9 +43,8 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
   copyImage() async {
     final type = DefaultBoringAvatarType.maybeOf(context)?.type ??
         BoringAvatarType.marble;
-    final colorPalette =
-        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
-            BoringAvatarPalette.defaultPalette;
+    final colorPalette = DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
+        BoringAvatarPalette.defaultPalette;
 
     final image = await BoringAvatarData.generate(
       name: widget.name,
@@ -55,8 +55,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
       size: const Size.square(512),
     );
 
-    final pngData =
-        await image.toByteData(format: ImageByteFormat.png);
+    final pngData = await image.toByteData(format: ImageByteFormat.png);
 
     final clipboard = SystemClipboard.instance;
     if (clipboard == null) {
@@ -107,7 +106,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide:
-                BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
+                    BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
                 borderRadius: const BorderRadius.all(Radius.circular(32)),
               ),
             ),
@@ -164,6 +163,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         });
   }
 
+  goToTestPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TestPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme =
@@ -173,7 +179,10 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Boring Avatars'),
+          title: GestureDetector(
+            child: Text('Boring Avatars'),
+            onTap: goToTestPage,
+          ),
           actions: [
             IconButton(
               tooltip: 'Pub.dev',

@@ -89,6 +89,7 @@ final pngByteData = await image.toByteData(format: ImageByteFormat.png);
 
 ## Thanks
 Thanks to the developers of [Boring Avatars](https://boringavatars.com/).
+
 The example uses the [beautiful palette project](https://github.com/Experience-Monks/nice-color-palettes) from [Matt DesLauriers](https://www.mattdesl.com/).
 
 If you like this project, please give me a star.

@@ -1,4 +1,7 @@
-# flutter_boring_avatars
+<img width="50px" align="right" alt="Github" src="./screenshots/logo.png" />
+
+flutter_boring_avatars
+------------
 
 [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/flutter_boring_avatars?include_prereleases)](https://pub.dev/packages/flutter_boring_avatars)
 

@@ -19,4 +19,4 @@ Special thanks to [fieldOfView](https://github.com/fieldOfView) for discovering 
 - Supports exporting avatars as images
 - Maintains the same generation algorithm as the original project
 - Removed the dependency on `svg_path_parser`, now relying only on the Flutter SDK
-- A beautiful Web Demo
+- A beautiful [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) is available to experience the effect

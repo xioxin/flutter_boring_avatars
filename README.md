@@ -1,4 +1,4 @@
-<img width="50px" align="right" alt="Github" src="./screenshots/logo.png" />
+<img width="50px" align="right" alt="Github" src="https://raw.githubusercontent.com/xioxin/flutter_boring_avatars/main/screenshots/logo.png" />
 
 flutter_boring_avatars
 ------------
@@ -19,7 +19,7 @@ Check out the [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) to ex
 
 ## Screenshots
 
-![preview1.png](screenshots%2Fpreview1.png)
+![preview1.png](https://raw.githubusercontent.com/xioxin/flutter_boring_avatars/main/screenshots/preview1.png)
 
 
 ## Installation

@@ -1,4 +1,4 @@
-<img width="50px" align="right" alt="Github" src="./screenshots/logo.png" />
+<img width="50px" align="right" alt="Github" src="https://raw.githubusercontent.com/xioxin/flutter_boring_avatars/main/screenshots/logo.png" />
 
 flutter_boring_avatars
 ------------
@@ -20,7 +20,7 @@ Boring avatars 可以根据用户名和调色板生成独特的头像。
 
 ## 截图
 
-![preview1.png](screenshots%2Fpreview1.png)
+![preview1.png](https://raw.githubusercontent.com/xioxin/flutter_boring_avatars/main/screenshots/preview1.png)
 
 ## 安装
 在 `pubspec.yaml` 文件中添加依赖：

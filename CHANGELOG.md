@@ -20,3 +20,6 @@ Special thanks to [fieldOfView](https://github.com/fieldOfView) for discovering 
 - Maintains the same generation algorithm as the original project
 - Removed the dependency on `svg_path_parser`, now relying only on the Flutter SDK
 - A beautiful [Web Demo](https://xioxin.github.io/flutter_boring_avatars/) is available to experience the effect
+
+## 2.0.1
+- Modify the image link in README to display correctly on pub.dev

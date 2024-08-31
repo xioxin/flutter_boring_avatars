@@ -1,6 +1,6 @@
 name: flutter_boring_avatars
 description: Boring avatars can generate unique avatars based on the username and color palette.
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/xioxin/flutter_boring_avatars
 repository: https://github.com/xioxin/flutter_boring_avatars
 issue_tracker: https://github.com/xioxin/flutter_boring_avatars/issues
@@ -29,7 +29,7 @@ topics:
   - animation
 
 screenshots:
-  - description: logo
+  - description: An avatar example
     path: screenshots/logo.png
-  - description: preview
+  - description: Examples of different types of avatars
     path: screenshots/preview2.png

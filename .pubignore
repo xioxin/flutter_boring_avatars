@@ -1,4 +1,14 @@
 docs
+build
 example/.idea
 example/build
+example/linux
+example/macos
+example/test
+example/web
+example/windows
+example/linux
+example/ios
+example/android
 .github
+FUNDING.yml

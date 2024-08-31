@@ -153,5 +153,4 @@ class AvatarPixelPainter extends BoringAvatarPainter {
     }
     canvas.restore();
   }
-
 }

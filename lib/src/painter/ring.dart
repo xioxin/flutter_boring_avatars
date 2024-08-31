@@ -140,5 +140,4 @@ class AvatarRingPainter extends BoringAvatarPainter {
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), cX(23),
         fillPaint(properties.colorList.last));
   }
-
 }

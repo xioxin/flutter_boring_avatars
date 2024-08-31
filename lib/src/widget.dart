@@ -161,8 +161,10 @@ class BoringAvatarCustomPainter extends CustomPainter {
 
   @override
   hitTest(Offset position) {
-    if(avatarData.shape == null) return true;
-    final hit = avatarData.shape!.getOuterPath(Offset.zero & lastSize).contains(position);
+    if (avatarData.shape == null) return true;
+    final hit = avatarData.shape!
+        .getOuterPath(Offset.zero & lastSize)
+        .contains(position);
     return hit;
   }
 }

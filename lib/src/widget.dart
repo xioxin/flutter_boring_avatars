@@ -15,6 +15,7 @@ class BoringAvatarCanvas extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size.infinite,
+      isComplex: true,
       painter: BoringAvatarCustomPainter(avatarData),
       child: child,
     );
@@ -123,6 +124,7 @@ class _AnimatedBoringCanvasState
       aspectRatio: 1,
       child: CustomPaint(
         size: Size.infinite,
+        isComplex: true,
         painter: BoringAvatarCustomPainter(avatarData),
         child: widget.child,
       ),
@@ -232,7 +234,7 @@ class BoringAvatarDecoration extends Decoration {
   });
 
   @override
-  bool get isComplex => false;
+  bool get isComplex => true;
 
   @override
   BoringAvatarDecoration? lerpFrom(Decoration? a, double t) {

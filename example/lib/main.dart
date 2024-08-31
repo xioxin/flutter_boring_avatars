@@ -14,6 +14,122 @@ void main() {
   runApp(const MaterialApp(home: MyApp()));
 }
 
+
+
+
+class AvatarInputWidget extends StatefulWidget {
+  const AvatarInputWidget({
+    Key? key,
+    required this.name,
+    required this.onNameChanged,
+    required this.resetInput,
+    required this.shape,
+  }) : super(key: key);
+
+  final String name;
+  final ValueChanged<String> onNameChanged;
+  final int resetInput;
+  final ShapeBorder shape;
+
+  @override
+  State<AvatarInputWidget> createState() => _AvatarInputWidgetState();
+}
+
+class _AvatarInputWidgetState extends State<AvatarInputWidget> {
+  late TextEditingController textController = TextEditingController(
+    text: widget.name,
+  );
+
+  late int inputKey = widget.resetInput;
+
+  copyImage() async {
+    final type = DefaultBoringAvatarType.maybeOf(context)?.type ??
+        BoringAvatarType.marble;
+    final colorPalette =
+        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
+            BoringAvatarPalette.defaultPalette;
+
+    final image = await BoringAvatarData.generate(
+      name: widget.name,
+      type: type,
+      palette: colorPalette,
+      shape: widget.shape,
+    ).toImage(
+      size: const Size.square(512),
+    );
+
+    final pngData =
+        await image.toByteData(format: ImageByteFormat.png);
+
+    final clipboard = SystemClipboard.instance;
+    if (clipboard == null) {
+      return; // Clipboard API is not supported on this platform.
+    }
+    final item = DataWriterItem();
+    item.add(Formats.png(pngData!.buffer.asUint8List()));
+    await clipboard.write([item]);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Avatar image copied to clipboard'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.resetInput != inputKey) {
+      textController = TextEditingController(
+        text: widget.name,
+      );
+      inputKey = widget.resetInput;
+    }
+    return Column(
+      children: [
+        Expanded(
+          child: AnimatedBoringAvatar(
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeInOutCubicEmphasized,
+            name: widget.name,
+            shape: widget.shape,
+            child: RawMaterialButton(
+              shape: widget.shape,
+              onPressed: copyImage,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 24,
+          child: TextField(
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.all(Radius.circular(32)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide:
+                BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
+                borderRadius: const BorderRadius.all(Radius.circular(32)),
+              ),
+            ),
+            controller: textController,
+            style: const TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+            onChanged: widget.onNameChanged,
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
+
+
+
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -98,9 +214,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               child: Positioned.fill(
                 child: GridView.builder(
                   padding: const EdgeInsets.only(
-                      left: 32, top: 180, right: 32, bottom: 32),
+                      left: 32, top: 140, right: 32, bottom: 32),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150,
+                    maxCrossAxisExtent: 140,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
@@ -145,128 +261,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-    );
-  }
-}
-
-class AvatarInputWidget extends StatefulWidget {
-  const AvatarInputWidget({
-    Key? key,
-    required this.name,
-    required this.onNameChanged,
-    required this.resetInput,
-    required this.shape,
-  }) : super(key: key);
-
-  final String name;
-  final ValueChanged<String> onNameChanged;
-  final int resetInput;
-  final ShapeBorder shape;
-
-  @override
-  State<AvatarInputWidget> createState() => _AvatarInputWidgetState();
-}
-
-class _AvatarInputWidgetState extends State<AvatarInputWidget> {
-  late TextEditingController textController = TextEditingController(
-    text: widget.name,
-  );
-
-  late int inputKey = widget.resetInput;
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.resetInput != inputKey) {
-      textController = TextEditingController(
-        text: widget.name,
-      );
-      inputKey = widget.resetInput;
-    }
-    return Column(
-      children: [
-        Expanded(
-          // child: AnimatedContainer(
-          //   duration: const Duration(milliseconds: 1000),
-          //   curve: Curves.easeInOutCubicEmphasized,
-          //   decoration: BoringAvatarDecoration(
-          //     avatarData: BoringAvatarData.generate(
-          //       name: widget.name,
-          //       palette: widget.colorPalette,
-          //       type: widget.type,
-          //       shape: widget.shape,
-          //     ),
-          //   ),
-          //   child: const AspectRatio(
-          //     aspectRatio: 1,
-          //   ),
-          // ),
-          child: AnimatedBoringAvatar(
-            duration: const Duration(milliseconds: 1000),
-            curve: Curves.easeInOutCubicEmphasized,
-            name: widget.name,
-            shape: widget.shape,
-            child: RawMaterialButton(
-              shape: widget.shape,
-              onPressed: () async {
-                final type = DefaultBoringAvatarType.maybeOf(context)?.type ??
-                    BoringAvatarType.marble;
-                final colorPalette =
-                    DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
-                        BoringAvatarPalette.defaultPalette;
-
-                final image = await BoringAvatarData.generate(
-                  name: widget.name,
-                  type: type,
-                  palette: colorPalette,
-                  shape: widget.shape,
-                ).toImage(
-                  size: const Size.square(512),
-                );
-
-                final pngData =
-                    await image.toByteData(format: ImageByteFormat.png);
-
-                final clipboard = SystemClipboard.instance;
-                if (clipboard == null) {
-                  return; // Clipboard API is not supported on this platform.
-                }
-                final item = DataWriterItem();
-                item.add(Formats.png(pngData!.buffer.asUint8List()));
-                await clipboard.write([item]);
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Avatar image copied to clipboard'),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 24,
-          child: TextField(
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.all(Radius.circular(32)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(32)),
-              ),
-            ),
-            controller: textController,
-            style: const TextStyle(fontSize: 12),
-            textAlign: TextAlign.center,
-            onChanged: widget.onNameChanged,
-          ),
-        ),
-        const SizedBox(height: 8),
-      ],
     );
   }
 }

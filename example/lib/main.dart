@@ -106,7 +106,7 @@ class _AvatarInputWidgetState extends State<AvatarInputWidget> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide:
-                    BorderSide(color: Colors.grey.withOpacity(0.0), width: 1),
+                    BorderSide(color: Colors.grey.withValues(alpha: 0.0), width: 1),
                 borderRadius: const BorderRadius.all(Radius.circular(32)),
               ),
             ),
@@ -166,7 +166,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   goToTestPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TestPage()),
+      MaterialPageRoute(builder: (context) => const TestPage()),
     );
   }
 
@@ -180,7 +180,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         appBar: AppBar(
           centerTitle: true,
           title: GestureDetector(
-            child: Text('Boring Avatars'),
+            child: const Text('Boring Avatars'),
             onTap: goToTestPage,
           ),
           actions: [

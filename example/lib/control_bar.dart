@@ -150,8 +150,8 @@ class ControlBarWidget extends StatelessWidget {
             end: Alignment.bottomCenter,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surface.withOpacity(0.8),
-              Theme.of(context).colorScheme.surface.withOpacity(0),
+              Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+              Theme.of(context).colorScheme.surface.withValues(alpha: 0),
             ]),
       ),
       child: Padding(
@@ -305,7 +305,7 @@ class ControlBarWidget extends StatelessWidget {
                     onPressed: () {
                       Clipboard.setData(ClipboardData(
                           text:
-                              "const BoringAvatarPalette([${palette.colors.map((e) => "Color(0x${e.value.toRadixString(16)})").join(", ")}])"));
+                              "const BoringAvatarPalette([${palette.colors.map((e) => "Color(0x${e.toARGB32().toRadixString(16)})").join(", ")}])"));
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

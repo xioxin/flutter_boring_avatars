@@ -23,3 +23,17 @@ Special thanks to [fieldOfView](https://github.com/fieldOfView) for discovering 
 
 ## 2.0.1
 - Modify the image link in README to display correctly on pub.dev
+
+## 2.1.0
+
+### Performance
+
+- **Marble painter: cached static paths and single-pass transforms** — The two SVG-like `Path` objects in the marble variant had constant geometry but were rebuilt from scratch on every paint call. They are now top-level constants, created once. Additionally, the per-element transform and resize transform (previously applied as two separate `Path.transform()` calls, producing 4 `Path` allocations per frame) are now combined into a single `Matrix4`, halving path allocations. Benchmarked at ~2x faster paint calls.
+
+- **Widget data caching** — `BoringAvatar` and `AnimatedBoringAvatar` were `StatelessWidget`s that called `BoringAvatarData.generate()` on every `build()`, re-running the hash function and property calculations even when inputs hadn't changed. Both are now `StatefulWidget`s that cache the generated `BoringAvatarData` and only regenerate when the resolved `name`, `type`, `palette`, or `shape` actually change. This eliminates redundant work during parent rebuilds (e.g. scrolling lists, unrelated `setState` calls).
+
+- **Animated paint hint** — The `CustomPaint` inside `AnimatedBoringCanvas` now sets `willChange: true`, telling the raster cache not to waste effort caching frames that are immediately invalidated during animation.
+
+### Fixes
+
+- Resolved all deprecated API warnings: `Matrix4.translate`/`scale` migrated to `translateByDouble`/`scaleByDouble`, `Color.withOpacity` to `withValues`, `Color.red`/`green`/`blue` to the new component accessors, and `Color.value` to `toARGB32`.

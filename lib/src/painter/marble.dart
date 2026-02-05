@@ -148,6 +148,27 @@ class BoringAvatarMarbleData extends BoringAvatarData {
   }
 }
 
+final Path _marblePath1 = Path()
+  ..moveTo(32.414, 59.35)
+  ..lineTo(50.376, 70.5)
+  ..lineTo(72.5, 70.5)
+  ..lineTo(72.5, -0.5)
+  ..lineTo(33.728, -0.5)
+  ..lineTo(26.5, 13.381)
+  ..relativeLineTo(19.057, 27.08)
+  ..close();
+
+final Path _marblePath2 = Path()
+  ..moveTo(22.216, 24)
+  ..lineTo(0, 46.75)
+  ..relativeLineTo(14.108, 38.129)
+  ..lineTo(78, 86)
+  ..relativeLineTo(-3.081, -59.276)
+  ..relativeLineTo(-22.378, 4.005)
+  ..relativeLineTo(12.972, 20.186)
+  ..relativeLineTo(-23.35, 27.395)
+  ..close();
+
 class AvatarMarblePainter extends BoringAvatarPainter {
   @override
   final BoringAvatarMarbleData properties;
@@ -171,25 +192,15 @@ class AvatarMarblePainter extends BoringAvatarPainter {
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paintFill);
     final scaleX = size.width / boxSize;
     final scaleY = size.height / boxSize;
-    final resizeTransform = Matrix4.identity()..scale(scaleX, scaleY);
     final path1Transform = Matrix4.identity()
-      ..translate(p.element1TranslateX, p.element1TranslateY)
-      ..translate(boxSize / 2, boxSize / 2)
+      ..scaleByDouble(scaleX, scaleY, scaleX, 1.0)
+      ..translateByDouble(p.element1TranslateX, p.element1TranslateY, 0.0, 1.0)
+      ..translateByDouble(boxSize / 2, boxSize / 2, 0.0, 1.0)
       ..rotateZ(p.element1Rotate * (pi / 180))
-      ..translate(-boxSize / 2, -boxSize / 2)
-      ..scale(p.element1Scale, p.element1Scale);
+      ..translateByDouble(-boxSize / 2, -boxSize / 2, 0.0, 1.0)
+      ..scaleByDouble(p.element1Scale, p.element1Scale, p.element1Scale, 1.0);
 
-    Path path1 = (Path()
-          ..moveTo(32.414, 59.35) // M32.414 59.35
-          ..lineTo(50.376, 70.5) // L50.376 70.5
-          ..lineTo(72.5, 70.5) // H72.5
-          ..lineTo(72.5, -0.5) // v-71
-          ..lineTo(33.728, -0.5) // H33.728
-          ..lineTo(26.5, 13.381) // L26.5 13.381
-          ..relativeLineTo(19.057, 27.08) // l19.057 27.08
-          ..close())
-        .transform(path1Transform.storage)
-        .transform(resizeTransform.storage);
+    final path1 = _marblePath1.transform(path1Transform.storage);
     Paint paintFill1 = Paint()
       ..style = PaintingStyle.fill
       ..color = p.element1Color
@@ -204,24 +215,14 @@ class AvatarMarblePainter extends BoringAvatarPainter {
       ..maskFilter = blur;
 
     final path2Transform = Matrix4.identity()
-      ..translate(p.element2TranslateX, p.element2TranslateY)
-      ..translate(boxSize / 2, boxSize / 2)
+      ..scaleByDouble(scaleX, scaleY, scaleX, 1.0)
+      ..translateByDouble(p.element2TranslateX, p.element2TranslateY, 0.0, 1.0)
+      ..translateByDouble(boxSize / 2, boxSize / 2, 0.0, 1.0)
       ..rotateZ(p.element2Rotate * (pi / 180))
-      ..translate(-boxSize / 2, -boxSize / 2)
-      ..scale(p.element2Scale, p.element2Scale);
+      ..translateByDouble(-boxSize / 2, -boxSize / 2, 0.0, 1.0)
+      ..scaleByDouble(p.element2Scale, p.element2Scale, p.element2Scale, 1.0);
 
-    final path2 = (Path()
-          ..moveTo(22.216, 24) // M22.216 24
-          ..lineTo(0, 46.75) // L0 46.75
-          ..relativeLineTo(14.108, 38.129) // l14.108 38.129
-          ..lineTo(78, 86) // L78 86
-          ..relativeLineTo(-3.081, -59.276) // l-3.081-59.276
-          ..relativeLineTo(-22.378, 4.005) // l-22.378 4.005
-          ..relativeLineTo(12.972, 20.186) // l12.972 20.186
-          ..relativeLineTo(-23.35, 27.395) // l-23.35 27.395
-          ..close())
-        .transform(path2Transform.storage)
-        .transform(resizeTransform.storage);
+    final path2 = _marblePath2.transform(path2Transform.storage);
     canvas.drawPath(path2, paintFill2);
   }
 }

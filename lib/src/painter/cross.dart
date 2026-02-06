@@ -88,7 +88,7 @@ class BoringAvatarCrossPainter extends BoringAvatarPainter {
     p.begin.paint(canvas, Offset.zero & rect.size);
     canvas.restore();
     canvas.saveLayer(Offset.zero & rect.size,
-        Paint()..color = Colors.white.withOpacity(p.t));
+        Paint()..color = Colors.white.withValues(alpha: p.t));
     p.end.paint(canvas, Offset.zero & rect.size);
     canvas.restore();
   }

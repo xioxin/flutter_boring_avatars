@@ -29,7 +29,7 @@ class BoringAvatarCanvas extends StatelessWidget {
   }
 }
 
-class BoringAvatar extends StatelessWidget {
+class BoringAvatar extends StatefulWidget {
   final String name;
 
   final BoringAvatarType? type;
@@ -47,25 +47,7 @@ class BoringAvatar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final palette = this.palette ??
-        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
-        BoringAvatarPalette.defaultPalette;
-    final type = this.type ??
-        DefaultBoringAvatarType.maybeOf(context)?.type ??
-        BoringAvatarType.marble;
-    return AspectRatio(
-      aspectRatio: 1,
-      child: BoringAvatarCanvas(
-        avatarData: BoringAvatarData.generate(
-          name: name,
-          type: type,
-          palette: palette,
-          shape: shape,
-        ),
-      ),
-    );
-  }
+  State<BoringAvatar> createState() => _BoringAvatarState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -75,6 +57,46 @@ class BoringAvatar extends StatelessWidget {
         .add(DiagnosticsProperty<BoringAvatarPalette?>('palette', palette));
     properties.add(DiagnosticsProperty<BoringAvatarType?>('type', type));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape));
+  }
+}
+
+class _BoringAvatarState extends State<BoringAvatar> {
+  BoringAvatarData? _data;
+  String? _name;
+  BoringAvatarType? _type;
+  BoringAvatarPalette? _palette;
+  ShapeBorder? _shape;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = widget.palette ??
+        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
+        BoringAvatarPalette.defaultPalette;
+    final type = widget.type ??
+        DefaultBoringAvatarType.maybeOf(context)?.type ??
+        BoringAvatarType.marble;
+
+    if (_data == null ||
+        widget.name != _name ||
+        type != _type ||
+        palette != _palette ||
+        widget.shape != _shape) {
+      _name = widget.name;
+      _type = type;
+      _palette = palette;
+      _shape = widget.shape;
+      _data = BoringAvatarData.generate(
+        name: widget.name,
+        type: type,
+        palette: palette,
+        shape: widget.shape,
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: 1,
+      child: BoringAvatarCanvas(avatarData: _data!),
+    );
   }
 }
 
@@ -125,6 +147,7 @@ class _AnimatedBoringCanvasState
       child: CustomPaint(
         size: Size.infinite,
         isComplex: true,
+        willChange: true,
         painter: BoringAvatarCustomPainter(avatarData),
         child: widget.child,
       ),
@@ -169,7 +192,7 @@ class BoringAvatarCustomPainter extends CustomPainter {
   }
 }
 
-class AnimatedBoringAvatar extends StatelessWidget {
+class AnimatedBoringAvatar extends StatefulWidget {
   final String name;
 
   final BoringAvatarType? type;
@@ -199,29 +222,7 @@ class AnimatedBoringAvatar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final palette = this.palette ??
-        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
-        BoringAvatarPalette.defaultPalette;
-    final type = this.type ??
-        DefaultBoringAvatarType.maybeOf(context)?.type ??
-        BoringAvatarType.marble;
-    return AspectRatio(
-      aspectRatio: 1,
-      child: AnimatedBoringCanvas(
-        avatarData: BoringAvatarData.generate(
-          name: name,
-          type: type,
-          palette: palette,
-          shape: shape,
-        ),
-        onEnd: onEnd,
-        curve: curve,
-        duration: duration,
-        child: child,
-      ),
-    );
-  }
+  State<AnimatedBoringAvatar> createState() => _AnimatedBoringAvatarState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -234,6 +235,52 @@ class AnimatedBoringAvatar extends StatelessWidget {
     properties.add(DiagnosticsProperty<Duration>('duration', duration));
     properties.add(DiagnosticsProperty<VoidCallback?>('onEnd', onEnd));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape));
+  }
+}
+
+class _AnimatedBoringAvatarState extends State<AnimatedBoringAvatar> {
+  BoringAvatarData? _data;
+  String? _name;
+  BoringAvatarType? _type;
+  BoringAvatarPalette? _palette;
+  ShapeBorder? _shape;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = widget.palette ??
+        DefaultBoringAvatarPalette.maybeOf(context)?.palette ??
+        BoringAvatarPalette.defaultPalette;
+    final type = widget.type ??
+        DefaultBoringAvatarType.maybeOf(context)?.type ??
+        BoringAvatarType.marble;
+
+    if (_data == null ||
+        widget.name != _name ||
+        type != _type ||
+        palette != _palette ||
+        widget.shape != _shape) {
+      _name = widget.name;
+      _type = type;
+      _palette = palette;
+      _shape = widget.shape;
+      _data = BoringAvatarData.generate(
+        name: widget.name,
+        type: type,
+        palette: palette,
+        shape: widget.shape,
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: 1,
+      child: AnimatedBoringCanvas(
+        avatarData: _data!,
+        onEnd: widget.onEnd,
+        curve: widget.curve,
+        duration: widget.duration,
+        child: widget.child,
+      ),
+    );
   }
 }
 

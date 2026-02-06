@@ -177,13 +177,13 @@ class _TestPageState extends State<TestPage> {
                 cursor: SystemMouseCursors.click,
                 hitTestBehavior: HitTestBehavior.deferToChild,
                 onEnter: (event) {
-                  print("AnimatedBoringAvatar onEnter");
+                  debugPrint("AnimatedBoringAvatar onEnter");
                   setState(() {
                     animatedBoringAvatarEnter = true;
                   });
                 },
                 onExit: (event) {
-                  print("AnimatedBoringAvatar onExit");
+                  debugPrint("AnimatedBoringAvatar onExit");
                   setState(() {
                     animatedBoringAvatarEnter = false;
                   });

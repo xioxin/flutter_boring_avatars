@@ -70,7 +70,7 @@ abstract class BoringAvatarPainter {
 
   double cY(double y) => y * scale.height;
 
-  paint(Canvas canvas) {
+  void paint(Canvas canvas) {
     canvas.save();
     if (properties.shape != null) {
       final shape = properties.shape!;
